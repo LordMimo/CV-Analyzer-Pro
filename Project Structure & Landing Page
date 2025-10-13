@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Analyzer - Instant Insights</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1080FF',
+                        'dark-gray': '#1F2937',
+                        'light-text': '#E5E7EB',
+                        'card-bg': '#374151',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Ensuring full height on mobile devices */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        /* Custom animation for the button */
+        @keyframes pulse-once {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-pulse-once {
+            animation: pulse-once 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-dark-gray text-light-text font-sans min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main Application Container -->
+    <div id="landing-page-container" class="w-full max-w-2xl bg-card-bg shadow-2xl rounded-xl p-8 md:p-12 text-center border border-gray-700">
+        
+        <!-- Header & Title -->
+        <header class="mb-8">
+            <svg class="w-16 h-16 mx-auto text-primary-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mt-4">CV Analyzer</h1>
+            <p class="text-lg text-gray-400 mt-2">Unlock the potential of your résumé with AI-powered insights.</p>
+        </header>
+
+        <!-- Feature Introduction -->
+        <section class="text-left mb-10">
+            <h2 class="text-2xl font-semibold text-primary-blue mb-4">How It Works</h2>
+            <ul class="space-y-3 text-gray-300">
+                <li class="flex items-start">
+                    <span class="text-primary-blue text-xl mr-3">1.</span>
+                    <p><strong>Upload your document:</strong> Securely submit your CV or resume in PDF or DOCX format.</p>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-primary-blue text-xl mr-3">2.</span>
+                    <p><strong>Instant Analysis:</strong> Our model scans for key skills, professional formatting, and structure.</p>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-primary-blue text-xl mr-3">3.</span>
+                    <p><strong>Get Feedback:</strong> Receive a detailed report highlighting strengths and areas for improvement.</p>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Action Button -->
+        <button id="goToUploadBtn" 
+                class="w-full py-3 px-6 bg-primary-blue hover:bg-blue-600 text-white font-bold text-lg rounded-lg shadow-lg transition duration-300 transform hover:scale-[1.02] active:scale-100 focus:outline-none focus:ring-4 focus:ring-primary-blue focus:ring-opacity-50">
+            Start Your Free Analysis
+        </button>
+        <p class="text-sm text-gray-500 mt-4">No registration required. Analysis is anonymous.</p>
+        
+        <!-- Placeholder Message for "Navigation" -->
+        <div id="upload-message" class="hidden mt-8 p-4 bg-yellow-900 border border-yellow-700 text-yellow-300 rounded-lg">
+            <!-- This message simulates navigating to the upload page -->
+            <p><strong>Redirecting...</strong> This is where the file upload interface would load. (For this demonstration, click the button again to reset the message.)</p>
+        </div>
+
+    </div>
+
+    <script>
+        // JavaScript for button interaction
+        document.getElementById('goToUploadBtn').addEventListener('click', function() {
+            const container = document.getElementById('landing-page-container');
+            const message = document.getElementById('upload-message');
+            
+            // Apply a visual click effect
+            this.classList.add('animate-pulse-once');
+            setTimeout(() => {
+                this.classList.remove('animate-pulse-once');
+            }, 500);
+
+            // Show the placeholder message
+            if (message.classList.contains('hidden')) {
+                message.classList.remove('hidden');
+                // Hide the main content (simulating page change)
+                document.querySelector('header').classList.add('hidden');
+                document.querySelector('section').classList.add('hidden');
+                this.textContent = 'Reset Demo';
+                this.classList.remove('bg-primary-blue');
+                this.classList.add('bg-gray-600');
+            } else {
+                // Reset the demo state
+                message.classList.add('hidden');
+                document.querySelector('header').classList.remove('hidden');
+                document.querySelector('section').classList.remove('hidden');
+                this.textContent = 'Start Your Free Analysis';
+                this.classList.remove('bg-gray-600');
+                this.classList.add('bg-primary-blue');
+            }
+        });
+    </script>
+</body>
+</html>
