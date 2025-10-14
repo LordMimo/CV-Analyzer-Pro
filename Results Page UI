@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة عرض النتائج</title>
+    <style>
+        :root {
+            /* الألوان الأساسية للمؤشرات */
+            --color-success: #4CAF50; /* أخضر */
+            --color-warning: #FFC107; /* أصفر */
+            --color-danger: #F44336; /* أحمر */
+            --color-primary: #2196F3; /* أزرق */
+            --color-text: #333;
+            --color-bg: #f5f7fa;
+            --color-card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            direction: rtl; /* لدعم اللغة العربية */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--color-card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+        }
+
+        /* 1. قسم النتيجة الإجمالية */
+        .overall-score {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--color-card-bg);
+            /* تدرج لوني يعتمد على النتيجة */
+            background: conic-gradient(
+                var(--color-success) 85%, /* 85% - النتيجة */
+                #ddd 85%
+            );
+        }
+
+        .score-85 {
+            background: conic-gradient(var(--color-success) 85%, #ddd 85%);
+        }
+        /* يمكن إنشاء فئات أخرى مثل score-70, score-40 لتغيير اللون حسب النتيجة */
+
+
+        /* 2. قسم مطابقة الكلمات المفتاحية */
+        .keyword-matches h3 {
+            margin-top: 0;
+        }
+
+        .progress-item {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 25px;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-card-bg);
+            font-weight: bold;
+            text-align: center;
+            transition: width 0.5s ease-out;
+        }
+
+        /* فئات ألوان التقدم */
+        .progress-fill.green { background-color: var(--color-success); }
+        .progress-fill.yellow { background-color: var(--color-warning); }
+        .progress-fill.red { background-color: var(--color-danger); }
+
+        /* 3. قسم المعلومات المستخرجة */
+        .extracted-info table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        .extracted-info th, .extracted-info td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .extracted-info th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+        }
+
+        /* المؤشرات الملونة في الجدول */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: var(--color-card-bg);
+        }
+
+        .status-complete { background-color: var(--color-success); }
+        .status-incomplete { background-color: var(--color-warning); }
+        .status-missing { background-color: var(--color-danger); }
+
+
+        /* تنسيق الشبكة للمحتوى */
+        .grid-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr 2fr;
+        }
+
+        @media (max-width: 900px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container grid-3">
+    
+    <div class="card overall-score">
+        <h2>النتيجة الإجمالية</h2>
+        <div class="score-circle score-85">
+            85%
+        </div>
+        <p style="font-size: 1.2em; color: var(--color-success);">✅ مطابقة جيدة جداً</p>
+    </div>
+
+    <div class="card">
+        <h2>ملخص التحليل</h2>
+        <div class="summary-list">
+            <p><strong>حالة المطابقة:</strong> <span style="color: var(--color-success); font-weight: bold;">جيدة</span></p>
+            <p><strong>العناصر المستخرجة:</strong> 12 / 15</p>
+            <p><strong>إجمالي الكلمات المفتاحية:</strong> 28</p>
+            <p><strong>تاريخ التقرير:</strong> 2025-10-14</p>
+        </div>
+    </div>
+    
+    <div class="card keyword-matches">
+        <h2>توزيع مطابقة الكلمات المفتاحية</h2>
+
+        <div class="progress-item">
+            <label>المتطلبات الأساسية (95%)</label>
+            <div class="progress-bar">
+                <div class="progress-fill green" style="width: 95%;">95%</div>
+            </div>
+        </div>
+
+        <div class="progress-item">
+            <label>المصطلحات التقنية (78%)</label>
+            <div class="progress-bar">
+                <div class="progress-fill yellow" style="width: 78%;">78%</div>
+            </div>
+        </div>
+
+        <div class="progress-item">
+            <label>الميزات الثانوية (62%)</label>
+            <div class="progress-bar">
+                <div class="progress-fill yellow" style="width: 62%;">62%</div>
+            </div>
+        </div>
+
+        <div class="progress-item">
+            <label>الامتثال واللوائح (45%)</label>
+            <div class="progress-bar">
+                <div class="progress-fill red" style="width: 45%;">45%</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card extracted-info" style="margin-top: 20px;">
+    <h2>جداول المعلومات المستخرجة</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>حقل البيانات</th>
+                <th>القيمة المستخرجة</th>
+                <th>الحالة</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>عنوان المشروع</td>
+                <td>"مبادرة إعادة التصميم للربع الرابع"</td>
+                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+            </tr>
+            <tr>
+                <td>اسم العميل</td>
+                <td>شركة أكمل</td>
+                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+            </tr>
+            <tr>
+                <td>تاريخ البدء</td>
+                <td>2025-11-01</td>
+                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+            </tr>
+            <tr>
+                <td>المبلغ المخصص للميزانية</td>
+                <td>$50,000</td>
+                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+            </tr>
+            <tr>
+                <td>قائد الفريق</td>
+                <td>*غير متوفر*</td>
+                <td><span class="status-badge status-missing">مفقود ❌</span></td>
+            </tr>
+            <tr>
+                <td>عدد التسليمات</td>
+                <td>4 (تم تحديد 4 من 6)</td>
+                <td><span class="status-badge status-incomplete">غير مكتمل ⚠️</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
