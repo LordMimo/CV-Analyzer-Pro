@@ -1,0 +1,139 @@
+DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Theme Site</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="script.js"></script>
+</body>
+</html>
+12:18 am
+/* style.css */
+
+/* 1. Base Styles (Mobile First) */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Use a fluid unit for max width on content container */
+    max-width: 100%;
+}
+
+.container {
+    padding: 1em;
+    width: 90%;
+    margin: 0 auto;
+}
+
+/* Example: Simple Nav Bar with Flexbox */
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex; /* Flexbox for layout */
+    flex-direction: column; /* Stacks links vertically on small screens */
+    gap: 10px;
+}
+
+/* 2. Media Query for Tablet/Small Desktop (e.g., > 768px) */
+@media (min-width: 768px) {
+    .container {
+        width: 80%; /* Widen the container on larger screens */
+    }
+
+    nav ul {
+        flex-direction: row; /* Layout links horizontally */
+        justify-content: space-around;
+    }
+}
+
+/* 3. Media Query for Large Desktop (e.g., > 1200px) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1100px; /* Cap the max width on very large screens */
+    }
+}
+12:18 am
+<header>
+    <h1>My Responsive Site</h1>
+    <button id="theme-toggle">Toggle Theme</button>
+</header>
+<div class="container">
+    <p>This is the content that changes color with the theme.</p>
+</div>
+12:18 am
+/* style.css */
+
+/* Default Theme (Light) */
+:root {
+    /* Define variables for main colors */
+    --background-color: #f4f4f4;
+    --text-color: #333333;
+    --primary-color: #007bff;
+}
+
+/* Dark Theme specific variables - only applies when the 'dark-theme' class is active */
+body.dark-theme {
+    --background-color: #1a1a1a;
+    --text-color: #f4f4f4;
+    --primary-color: #00bcd4;
+}
+
+/* Apply variables to elements */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+a {
+    color: var(--primary-color);
+}
+
+#theme-toggle {
+    /* Style the button */
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+12:19 am
+// script.js
+
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+
+// 1. Check for saved theme preference on load
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    body.classList.add(savedTheme); // 'dark-theme' or 'light-theme'
+}
+
+// 2. Set the initial text of the toggle button (optional)
+function updateToggleText() {
+    if (body.classList.contains('dark-theme')) {
+        themeToggle.textContent = 'Switch to Light Theme ☀️';
+    } else {
+        themeToggle.textContent = 'Switch to Dark Theme 🌙';
+    }
+}
+
+// Initial text update
+updateToggleText();
+
+
+// 3. Add click event listener to the button
+themeToggle.addEventListener('click', () => {
+    // Toggle the 'dark-theme' class on the body
+    body.classList.toggle('dark-theme');
+
+    // Save the new preference to localStorage
+    const currentTheme = body.classList.contains('dark-theme') ? 'dark-theme' : '';
+    localStorage.setItem('theme', currentTheme);
+
+    // Update the button text
+    updateToggleText();
+});
