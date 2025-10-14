@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صفحة عرض النتائج</title>
+    <title>Clean Data Analysis Results</title>
     <style>
         :root {
-            /* الألوان الأساسية للمؤشرات */
-            --color-success: #4CAF50; /* أخضر */
-            --color-warning: #FFC107; /* أصفر */
-            --color-danger: #F44336; /* أحمر */
-            --color-primary: #2196F3; /* أزرق */
+            /* Color Palette */
+            --color-success: #4CAF50; /* Green */
+            --color-warning: #FFC107; /* Yellow */
+            --color-danger: #F44336; /* Red */
+            --color-primary: #2196F3; /* Blue */
             --color-text: #333;
             --color-bg: #f5f7fa;
             --color-card-bg: #ffffff;
@@ -22,7 +22,7 @@
             padding: 20px;
             background-color: var(--color-bg);
             color: var(--color-text);
-            direction: rtl; /* لدعم اللغة العربية */
+            direction: ltr;
         }
 
         .container {
@@ -46,7 +46,7 @@
             color: var(--color-primary);
         }
 
-        /* 1. قسم النتيجة الإجمالية */
+        /* 1. Overall Score Section */
         .overall-score {
             text-align: center;
         }
@@ -62,24 +62,14 @@
             font-size: 2.5em;
             font-weight: bold;
             color: var(--color-card-bg);
-            /* تدرج لوني يعتمد على النتيجة */
+            /* Conic gradient for the progress display (85% score example) */
             background: conic-gradient(
-                var(--color-success) 85%, /* 85% - النتيجة */
+                var(--color-success) 85%,
                 #ddd 85%
             );
         }
 
-        .score-85 {
-            background: conic-gradient(var(--color-success) 85%, #ddd 85%);
-        }
-        /* يمكن إنشاء فئات أخرى مثل score-70, score-40 لتغيير اللون حسب النتيجة */
-
-
-        /* 2. قسم مطابقة الكلمات المفتاحية */
-        .keyword-matches h3 {
-            margin-top: 0;
-        }
-
+        /* 2. Keyword Match Progress Bars */
         .progress-item {
             margin-bottom: 15px;
         }
@@ -103,16 +93,16 @@
             transition: width 0.5s ease-out;
         }
 
-        /* فئات ألوان التقدم */
+        /* Color classes for progress bars */
         .progress-fill.green { background-color: var(--color-success); }
         .progress-fill.yellow { background-color: var(--color-warning); }
         .progress-fill.red { background-color: var(--color-danger); }
 
-        /* 3. قسم المعلومات المستخرجة */
+        /* 3. Extracted Information Table */
         .extracted-info table {
             width: 100%;
             border-collapse: collapse;
-            text-align: right;
+            text-align: left;
         }
 
         .extracted-info th, .extracted-info td {
@@ -125,7 +115,7 @@
             font-weight: bold;
         }
 
-        /* المؤشرات الملونة في الجدول */
+        /* Color-coded Status Badges */
         .status-badge {
             display: inline-block;
             padding: 5px 10px;
@@ -140,13 +130,9 @@
         .status-missing { background-color: var(--color-danger); }
 
 
-        /* تنسيق الشبكة للمحتوى */
+        /* Layout Grid */
         .grid-3 {
             grid-template-columns: 1fr 1fr 1fr;
-        }
-
-        .grid-2 {
-            grid-template-columns: 1fr 2fr;
         }
 
         @media (max-width: 900px) {
@@ -161,49 +147,49 @@
 <div class="container grid-3">
     
     <div class="card overall-score">
-        <h2>النتيجة الإجمالية</h2>
-        <div class="score-circle score-85">
+        <h2>Overall Score</h2>
+        <div class="score-circle">
             85%
         </div>
-        <p style="font-size: 1.2em; color: var(--color-success);">✅ مطابقة جيدة جداً</p>
+        <p style="font-size: 1.2em; color: var(--color-success);">✅ Very Good Match</p>
     </div>
 
     <div class="card">
-        <h2>ملخص التحليل</h2>
+        <h2>Analysis Summary</h2>
         <div class="summary-list">
-            <p><strong>حالة المطابقة:</strong> <span style="color: var(--color-success); font-weight: bold;">جيدة</span></p>
-            <p><strong>العناصر المستخرجة:</strong> 12 / 15</p>
-            <p><strong>إجمالي الكلمات المفتاحية:</strong> 28</p>
-            <p><strong>تاريخ التقرير:</strong> 2025-10-14</p>
+            <p><strong>Match Status:</strong> <span style="color: var(--color-success); font-weight: bold;">Good</span></p>
+            <p><strong>Items Extracted:</strong> 12 / 15</p>
+            <p><strong>Total Keywords Matched:</strong> 28</p>
+            <p><strong>Report Date:</strong> 2025-10-14</p>
         </div>
     </div>
     
     <div class="card keyword-matches">
-        <h2>توزيع مطابقة الكلمات المفتاحية</h2>
+        <h2>Keyword Match Breakdown</h2>
 
         <div class="progress-item">
-            <label>المتطلبات الأساسية (95%)</label>
+            <label>Core Requirements (95%)</label>
             <div class="progress-bar">
                 <div class="progress-fill green" style="width: 95%;">95%</div>
             </div>
         </div>
 
         <div class="progress-item">
-            <label>المصطلحات التقنية (78%)</label>
+            <label>Technical Terms (78%)</label>
             <div class="progress-bar">
                 <div class="progress-fill yellow" style="width: 78%;">78%</div>
             </div>
         </div>
 
         <div class="progress-item">
-            <label>الميزات الثانوية (62%)</label>
+            <label>Secondary Features (62%)</label>
             <div class="progress-bar">
                 <div class="progress-fill yellow" style="width: 62%;">62%</div>
             </div>
         </div>
 
         <div class="progress-item">
-            <label>الامتثال واللوائح (45%)</label>
+            <label>Compliance & Legal (45%)</label>
             <div class="progress-bar">
                 <div class="progress-fill red" style="width: 45%;">45%</div>
             </div>
@@ -213,46 +199,46 @@
 </div>
 
 <div class="card extracted-info" style="margin-top: 20px;">
-    <h2>جداول المعلومات المستخرجة</h2>
+    <h2>Extracted Information</h2>
 
     <table>
         <thead>
             <tr>
-                <th>حقل البيانات</th>
-                <th>القيمة المستخرجة</th>
-                <th>الحالة</th>
+                <th>Data Field</th>
+                <th>Extracted Value</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>عنوان المشروع</td>
-                <td>"مبادرة إعادة التصميم للربع الرابع"</td>
-                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+                <td>Project Title</td>
+                <td>"Q4 Redesign Initiative"</td>
+                <td><span class="status-badge status-complete">Complete ✅</span></td>
             </tr>
             <tr>
-                <td>اسم العميل</td>
-                <td>شركة أكمل</td>
-                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+                <td>Client Name</td>
+                <td>Acme Corp</td>
+                <td><span class="status-badge status-complete">Complete ✅</span></td>
             </tr>
             <tr>
-                <td>تاريخ البدء</td>
+                <td>Start Date</td>
                 <td>2025-11-01</td>
-                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+                <td><span class="status-badge status-complete">Complete ✅</span></td>
             </tr>
             <tr>
-                <td>المبلغ المخصص للميزانية</td>
+                <td>Budget Amount</td>
                 <td>$50,000</td>
-                <td><span class="status-badge status-complete">مكتمل ✅</span></td>
+                <td><span class="status-badge status-complete">Complete ✅</span></td>
             </tr>
             <tr>
-                <td>قائد الفريق</td>
-                <td>*غير متوفر*</td>
-                <td><span class="status-badge status-missing">مفقود ❌</span></td>
+                <td>Team Lead</td>
+                <td>*N/A*</td>
+                <td><span class="status-badge status-missing">Missing ❌</span></td>
             </tr>
             <tr>
-                <td>عدد التسليمات</td>
-                <td>4 (تم تحديد 4 من 6)</td>
-                <td><span class="status-badge status-incomplete">غير مكتمل ⚠️</span></td>
+                <td>Deliverable Count</td>
+                <td>4 (4 of 6 Identified)</td>
+                <td><span class="status-badge status-incomplete">Incomplete ⚠️</span></td>
             </tr>
         </tbody>
     </table>
