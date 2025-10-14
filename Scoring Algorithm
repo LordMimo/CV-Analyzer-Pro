@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CV Scoring System</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+    textarea { width: 100%; height: 200px; margin-top: 10px; }
+    button { margin-top: 10px; padding: 10px 20px; cursor: pointer; }
+    .result { margin-top: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 0 5px #ccc; }
+    .score { font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>CV Scoring System</h2>
+  <p>Paste your CV text below:</p>
+  <textarea id="cvText"></textarea><br>
+  <button onclick="analyzeCV()">Analyze CV</button>
+
+  <div id="result" class="result" style="display:none;">
+    <p class="score"></p>
+    <p class="recommendations"></p>
+  </div>
+
+  <script>
+    function analyzeCV() {
+      const text = document.getElementById("cvText").value.toLowerCase();
+      if (!text.trim()) {
+        alert("Please paste your CV text first!");
+        return;
+      }
+
+      let score = 0;
+      let recommendations = [];
+
+      // 1️⃣ Keywords
+      const keywords = ["experience", "skills", "education", "project", "team", "communication"];
+      let keywordCount = 0;
+      keywords.forEach(word => {
+        if (text.includes(word)) keywordCount++;
+      });
+      score += (keywordCount / keywords.length) * 40; // max 40 points
+
+      if (keywordCount < 3) recommendations.push("Add more relevant keywords like 'skills', 'projects', or 'experience'.");
+
+      // 2️⃣ Length
+      const wordCount = text.split(/\s+/).length;
+      if (wordCount < 150) {
+        score += 10; // short CV
+        recommendations.push("Your CV seems too short. Add more details about your roles or projects.");
+      } else if (wordCount < 400) {
+        score += 25; // good length
+      } else if (wordCount < 800) {
+        score += 20; // slightly long
+      } else {
+        score += 10; // too long
+        recommendations.push("Your CV might be too long. Try to make it more concise.");
+      }
+
+      // 3️⃣ Structure
+      let structurePoints = 0;
+      if (text.includes("education")) structurePoints += 10;
+      if (text.includes("experience")) structurePoints += 10;
+      if (text.includes("skills")) structurePoints += 10;
+      score += structurePoints; // max 30 points
+
+      if (structurePoints < 20) recommendations.push("Make sure your CV includes sections like Education, Experience, and Skills.");
+
+      // Final adjustment
+      score = Math.min(100, Math.round(score));
+
+      // Display results
+      document.getElementById("result").style.display = "block";
+      document.querySelector(".score").innerHTML = `🧠 CV Score: <strong>${score}/100</strong>`;
+      document.querySelector(".recommendations").innerHTML =
+        recommendations.length ? 
+        "📋 Recommendations:<br> - " + recommendations.join("<br> - ") :
+        "✅ Great job! Your CV looks well-structured and detailed.";
+    }
+  </script>
+
+</body>
+</html>
