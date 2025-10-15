@@ -13,10 +13,9 @@
             font-family: 'Inter', sans-serif;
             background-color: #f7f9fb; /* Light background */
             min-height: 100vh;
-            /* The main content area will now be centered using a wrapper div instead of body flex */
-            padding: 0; /* Remove padding from body */
+            padding: 0;
             margin: 0;
-            display: block; /* Change body back to block for full-page layout */
+            display: block;
         }
         /* Custom configuration for Tailwind colors */
         tailwind.config = {
@@ -35,20 +34,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 80px); /* Adjust for the nav height */
+            min-height: calc(100vh - 80px); 
             padding: 1rem;
         }
+
+        /* 💡 Your Design Guide Note: This is where internal styling or references 
+           can be added for project maintenance, keeping them off the public UI. */
     </style>
 </head>
 <body>
 
     <nav class="bg-white shadow-md w-full p-4 flex justify-center sticky top-0 z-10">
         <div class="flex space-x-8 text-lg font-medium">
-            <a href="index.html" class="text-primary hover:text-secondary transition duration-150">Home</a>
+            <a href="index.html" class="text-primary hover:text-secondary transition duration-150 font-bold">Home</a>
+            
             <a href="CVUploadPage.html" class="text-gray-600 hover:text-secondary transition duration-150">Upload CV</a>
-            <a href="ScoringAlgorithm.html" class="text-gray-600 hover:text-secondary transition duration-150">Scoring Algorithm</a>
+            
             <a href="ResultsPageUI.html" class="text-gray-600 hover:text-secondary transition duration-150">View Results</a>
-            <a href="ResponsiveDesign&Theming.html" class="text-gray-600 hover:text-secondary transition duration-150">Design Guide</a>
         </div>
     </nav>
     <div class="content-wrapper">
@@ -90,7 +92,7 @@
             <div>
                 <a href="CVUploadPage.html"
                     class="inline-flex items-center px-8 py-4 bg-secondary text-white font-semibold text-xl rounded-full shadow-lg hover:bg-secondary/90 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-secondary/50">
-                    Analyze My CV Now
+                    Upload & Analyze My CV Now
                     <svg class="inline ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                     </svg>
@@ -100,5 +102,5 @@
         </main>
     </div>
 
-    </body>
+</body>
 </html>
