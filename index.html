@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV Analyzer - Optimize Your Resume</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom font import for a modern look */
@@ -14,10 +13,10 @@
             font-family: 'Inter', sans-serif;
             background-color: #f7f9fb; /* Light background */
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            /* The main content area will now be centered using a wrapper div instead of body flex */
+            padding: 0; /* Remove padding from body */
+            margin: 0;
+            display: block; /* Change body back to block for full-page layout */
         }
         /* Custom configuration for Tailwind colors */
         tailwind.config = {
@@ -30,109 +29,76 @@
                 }
             }
         }
+
+        /* Utility class to center the main content on the page */
+        .content-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px); /* Adjust for the nav height */
+            padding: 1rem;
+        }
     </style>
 </head>
 <body>
 
-<main class="w-full max-w-4xl bg-white shadow-xl rounded-3xl p-8 md:p-16 text-center">
-
-    <!-- Header / Logo Area -->
-    <header class="mb-10">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-primary flex items-center justify-center space-x-3">
-            <!-- Icon placeholder (using SVG for high quality) -->
-            <svg class="w-10 h-10 md:w-12 md:h-12 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            <span class="tracking-tight">CV Analyzer</span>
-        </h1>
-    </header>
-
-    <!-- Main Introduction Content -->
-    <section class="mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            Optimize Your Career Potential. Instantly.
-        </h2>
-        <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            Get personalized, data-driven feedback on your CV and resume to ensure you pass the Applicant Tracking Systems (ATS) and impress hiring managers.
-        </p>
-    </section>
-
-    <!-- Key Features Mockup -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div class="p-6 bg-primary/10 rounded-xl shadow-md transition duration-300 hover:shadow-lg">
-            <p class="text-2xl font-bold text-primary mb-2">99%</p>
-            <p class="text-sm text-gray-700">ATS Compatibility</p>
+    <nav class="bg-white shadow-md w-full p-4 flex justify-center sticky top-0 z-10">
+        <div class="flex space-x-8 text-lg font-medium">
+            <a href="index.html" class="text-primary hover:text-secondary transition duration-150">Home</a>
+            <a href="CVUploadPage.html" class="text-gray-600 hover:text-secondary transition duration-150">Upload CV</a>
+            <a href="ScoringAlgorithm.html" class="text-gray-600 hover:text-secondary transition duration-150">Scoring Algorithm</a>
+            <a href="ResultsPageUI.html" class="text-gray-600 hover:text-secondary transition duration-150">View Results</a>
+            <a href="ResponsiveDesign&Theming.html" class="text-gray-600 hover:text-secondary transition duration-150">Design Guide</a>
         </div>
-        <div class="p-6 bg-primary/10 rounded-xl shadow-md transition duration-300 hover:shadow-lg">
-            <p class="text-2xl font-bold text-primary mb-2">Keywords</p>
-            <p class="text-sm text-gray-700">Role-Specific Match Score</p>
-        </div>
-        <div class="p-6 bg-primary/10 rounded-xl shadow-md transition duration-300 hover:shadow-lg">
-            <p class="text-2xl font-bold text-primary mb-2">Clarity</p>
-            <p class="text-sm text-gray-700">Formatting & Grammar</p>
-        </div>
-    </div>
+    </nav>
+    <div class="content-wrapper">
+        <main class="w-full max-w-4xl bg-white shadow-xl rounded-3xl p-8 md:p-16 text-center">
 
-    <!-- CTA Button -->
-    <div>
-        <div style="text-align: center; margin-top: 40px;">
-    <a href="CVUploadPage.html" 
-       style="background-color: #007bff; /* Example blue color */
-              color: white; 
-              padding: 15px 30px; 
-              text-decoration: none; 
-              border-radius: 5px; 
-              font-size: 1.2em; 
-              font-weight: bold;">
-        Start Your CV Analysis Now!
-    </a>
-</div>
-        <!-- The button calls a placeholder JavaScript function to simulate navigation -->
-        <button onclick="goToUploadPage()"
-                class="px-8 py-4 bg-secondary text-white font-semibold text-xl rounded-full shadow-lg hover:bg-secondary/90 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-secondary/50">
-            Analyze My CV Now
-            <!-- Arrow icon -->
-            <svg class="inline ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-            </svg>
-        </button>
-    </div>
+            <header class="mb-10">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-primary flex items-center justify-center space-x-3">
+                    <svg class="w-10 h-10 md:w-12 md:h-12 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="tracking-tight">CV Analyzer</span>
+                </h1>
+            </header>
 
-</main>
-
-<script>
-    /**
-     * @fileoverview JavaScript for the Landing Page.
-     * In a full multi-page application, this function would handle navigation 
-     * to the 'upload.html' page. Here, it logs the action.
-     */
-    
-    function goToUploadPage() {
-        // In a single-file React/Angular application, this would trigger a view change.
-        // In a multi-page web app, this would be: window.location.href = 'upload.html';
-        
-        console.log("Navigating to the CV Upload Page...");
-        
-        // For demonstration in this single HTML file:
-        const mainContent = document.querySelector('main');
-        
-        // Use a simple, non-alert-based confirmation message
-        mainContent.innerHTML = `
-            <div class="p-8 bg-white rounded-3xl text-center">
-                <h2 class="text-3xl font-bold text-secondary mb-4">Ready to Upload!</h2>
-                <p class="text-xl text-gray-700 mb-6">
-                    This action successfully simulated navigation to the 'Upload Page'.
-                    <br>
-                    Next, we will implement the file input and analysis logic.
+            <section class="mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    Optimize Your Career Potential. Instantly.
+                </h2>
+                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                    Get personalized, data-driven feedback on your CV and resume to ensure you pass the Applicant Tracking Systems (ATS) and impress hiring managers.
                 </p>
-                <button onclick="window.location.reload()" 
-                        class="px-6 py-3 bg-primary text-white rounded-full transition duration-300 hover:bg-primary/90">
-                    Go Back
-                </button>
-            </div>
-        `;
-    }
-</script>
+            </section>
 
-</body>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="p-6 bg-primary/10 rounded-xl shadow-md transition duration-300 hover:shadow-lg">
+                    <p class="text-2xl font-bold text-primary mb-2">99%</p>
+                    <p class="text-sm text-gray-700">ATS Compatibility</p>
+                </div>
+                <div class="p-6 bg-primary/10 rounded-xl shadow-md transition duration-300 hover:shadow-lg">
+                    <p class="text-2xl font-bold text-primary mb-2">Keywords</p>
+                    <p class="text-sm text-gray-700">Role-Specific Match Score</p>
+                </div>
+                <div class="p-6 bg-primary/10 rounded-xl shadow-md transition duration-300 hover:shadow-lg">
+                    <p class="text-2xl font-bold text-primary mb-2">Clarity</p>
+                    <p class="text-sm text-gray-700">Formatting & Grammar</p>
+                </div>
+            </div>
+
+            <div>
+                <a href="CVUploadPage.html"
+                    class="inline-flex items-center px-8 py-4 bg-secondary text-white font-semibold text-xl rounded-full shadow-lg hover:bg-secondary/90 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-secondary/50">
+                    Analyze My CV Now
+                    <svg class="inline ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    </body>
 </html>
