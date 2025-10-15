@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Text Extractor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #preview {
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Your CV (PDF Only)</h1>
+    <input type="file" id="cvUpload" accept="application/pdf">
+    <textarea id="preview" rows="15" cols="50" readonly placeholder="Extracted text will appear here..."></textarea>
+
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script> <!-- Include pdf.js from CDN -->
+    <script>
+        // Get the file input element
+        const cvUpload = document.getElementById('cvUpload');
+        const previewArea = document.getElementById('preview');
+
+        cvUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];  // Get the selected file
+
+            if (file) {
+                if (file.type !== 'application/pdf') {
+                    alert('Please upload a PDF file.');
+                    return;  // Stop if it's not a PDF
+                }
+
+                const reader = new FileReader();  // Create a FileReader instance
+
+                reader.onload = function(e) {
+                    const typedArray = new Uint8Array(e.target.result);  // Convert to Uint8Array for pdf.js
+
+                    pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+                        const totalPages = pdf.numPages;
+                        const textPromises = [];
+
+                        for (let i = 1; i <= totalPages; i++) {
+                            textPromises.push(
+                                pdf.getPage(i).then(function(page) {
+                                    return page.getTextContent().then(function(textContent) {
+                                        return textContent.items.map(function(item) {
+                                            return item.str;  // Extract the string from each item
+                                        }).join(' ');  // Join text items on the page
+                                    });
+                                })
+                            );
+                        }
+
+                        Promise.all(textPromises).then(function(pagesText) {
+                            const fullText = pagesText.join('\n\n');  // Join text from all pages
+                            previewArea.value = fullText;  // Display the raw extracted text
+                        });
+                    }).catch(function(error) {
+                        console.error('Error loading or extracting text from PDF:', error);
+                        previewArea.value = 'Error: Could not extract text from the PDF.';
+                    });
+                };
+
+                reader.readAsArrayBuffer(file);  // Read the file as ArrayBuffer
+            }
+        });
+    </script>
+</body>
+</html>
