@@ -62,19 +62,64 @@
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary text-center">
+            <div id="card-ats" data-card="ats" class="feature-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-secondary text-center cursor-pointer hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
                 <svg class="w-12 h-12 text-secondary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.27a11.97 11.97 0 010 16.923-11.97 11.97 0 01-16.923 0 11.97 11.97 0 010-16.923 11.97 11.97 0 0116.923 0z"></path></svg>
                 <h3 class="text-xl font-semibold text-gray-800 mb-2">ATS Compatibility Check</h3>
                 <p class="text-gray-600">Ensure your CV's format and structure are easily readable by automated systems.</p>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-primary text-center">
+            <div id="card-keywords" data-card="keywords" class="feature-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary text-center cursor-pointer hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
                 <svg class="w-12 h-12 text-primary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2v5a2 2 0 01-2 2h-5a2 2 0 01-2-2v-5a2 2 0 012-2h5zm0 0l-4-4"></path></svg>
                 <h3 class="text-xl font-semibold text-gray-800 mb-2">Targeted Keyword Scoring</h3>
                 <p class="text-gray-600">Get a score based on how well your skills match the desired job description.</p>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent text-center">
+            <div id="card-action" data-card="action" class="feature-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-accent text-center cursor-pointer hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
                 <svg class="w-12 h-12 text-accent mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 <h3 class="text-xl font-semibold text-gray-800 mb-2">Actionable Improvements</h3>
-                <p class="text-gray-6
+                <p class="text-gray-600">Receive precise recommendations to turn a weak point into a strong selling point.</p>
+            </div>
+        </div>
+
+        <div id="detail-ats" class="feature-detail mt-6 p-6 bg-secondary/10 border border-secondary rounded-lg hidden transition duration-500 ease-in-out">
+            <h4 class="text-xl font-bold text-secondary mb-2">What is ATS Compatibility?</h4>
+            <p class="text-gray-700">The Applicant Tracking System (ATS) is software recruiters use to scan, rank, and sort CVs. Our check verifies your document uses standard fonts, clear section headings, and a simple layout to ensure your CV isn't rejected by the software before a human even sees it. **A high score means your CV is easily searchable.**</p>
+        </div>
+
+        <div id="detail-keywords" class="feature-detail mt-6 p-6 bg-primary/10 border border-primary rounded-lg hidden transition duration-500 ease-in-out">
+            <h4 class="text-xl font-bold text-primary mb-2">How is Keyword Score Calculated?</h4>
+            <p class="text-gray-700">We analyze the keywords and technical skills from your chosen target job title and compare them to the content in your CV. This score tells you if you've used the industry-standard terminology and skill names that recruiters are searching for. **Use the exact keywords from the job description to improve this score!**</p>
+        </div>
+
+        <div id="detail-action" class="feature-detail mt-6 p-6 bg-accent/10 border border-accent rounded-lg hidden transition duration-500 ease-in-out">
+            <h4 class="text-xl font-bold text-accent mb-2">What are Actionable Improvements?</h4>
+            <p class="text-gray-700">Beyond simple keyword matching, we provide specific, concrete feedback like "Increase your use of quantifiable metrics" or "Explain the employment gap between 2020-2022." This detailed guidance tells you *exactly* how to edit your CV to increase your chances of getting an interview.</p>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const featureCards = document.querySelectorAll('.feature-card');
+            const detailAreas = document.querySelectorAll('.feature-detail');
+
+            featureCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const targetId = `detail-${card.dataset.card}`;
+                    const targetDetail = document.getElementById(targetId);
+
+                    // 1. Hide all detail areas first
+                    detailAreas.forEach(area => {
+                        if (area.id !== targetId) {
+                            area.classList.add('hidden');
+                        }
+                    });
+
+                    // 2. Toggle the visibility of the clicked detail area
+                    targetDetail.classList.toggle('hidden');
+                    
+                    // 3. Scroll to the card for better UX on mobile/smaller screens
+                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        });
+    </script>
