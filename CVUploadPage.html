@@ -80,6 +80,10 @@
                     Analyze CV & See Score Instantly
                 </button>
             </form>
+            
+            <p id="feedbackMessage" class="mt-4 text-lg text-secondary font-bold hidden">
+                CV Uploaded! Analyzing now...
+            </p>
 
         </main>
     </div>
@@ -90,9 +94,9 @@
             document.getElementById('uploadLabel').textContent = fileName;
         });
 
-        // ⭐ THE CORE LOGIC FOR REDIRECTION ⭐
+        // ⭐ REVISED CORE LOGIC FOR IMMEDIATE REDIRECTION ⭐
         function handleUpload(event) {
-            event.preventDefault(); // Stop the default form submission
+            event.preventDefault(); // Prevent the form from submitting normally (which would refresh the page)
             
             const fileInput = document.getElementById('cvFile');
             if (fileInput.files.length === 0) {
@@ -101,17 +105,17 @@
             }
 
             const button = document.getElementById('analyzeButton');
-            button.textContent = 'Processing... Please Wait';
-            button.disabled = true;
-
-            // 1. SIMULATE INTERNAL SCORING PROCESS (Placeholder for your backend API call)
-            // In a real application, you would send the file and job title to a server here.
+            const feedback = document.getElementById('feedbackMessage');
             
-            // 2. TIMED REDIRECTION to simulate processing time
-            setTimeout(() => {
-                // After the simulated process, redirect the user to the results page.
-                window.location.href = 'ResultsPageUI.html';
-            }, 2000); // 2-second delay to show 'Processing' state
+            // 1. Visually update for processing
+            button.textContent = 'Analyzing...';
+            button.disabled = true;
+            feedback.classList.remove('hidden');
+
+            // 2. IMMEDIATE REDIRECTION
+            // This code simulates the completion of the 'internal scoring process' 
+            // and directs the user to the results page immediately.
+            window.location.href = 'ResultsPageUI.html';
         }
     </script>
 
