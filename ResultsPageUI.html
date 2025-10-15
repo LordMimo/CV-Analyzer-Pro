@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
+            background-color: #f7f9fb; /* Light background for the body */
             min-height: 100vh;
         }
         tailwind.config = {
@@ -65,7 +65,7 @@
                     Your CV Analysis Complete!
                 </h1>
                 <p class="text-xl text-gray-600">
-                    Target Role: \textbf{Senior Software Engineer}
+                    Target Role: <strong>Senior Software Engineer</strong>
                 </p>
             </header>
 
@@ -79,13 +79,13 @@
                 <div class="text-left space-y-3">
                     <h2 class="text-2xl font-bold text-gray-800">Quick Metrics:</h2>
                     <p class="text-lg text-secondary font-medium flex items-center">
-                        <span class="mr-2">✅</span> \textbf{ATS Compatibility:} Excellent (95\%)
+                        <span class="mr-2">✅</span> <strong>ATS Compatibility:</strong> Excellent (95%)
                     </p>
                     <p class="text-lg text-primary font-medium flex items-center">
-                        <span class="mr-2">⭐</span> \textbf{Keyword Match:} Moderate (78\%)
+                        <span class="mr-2">⭐</span> <strong>Keyword Match:</strong> Moderate (78%)
                     </p>
                     <p class="text-lg text-danger font-medium flex items-center">
-                        <span class="mr-2">❌</span> \textbf{Action Verbs:} Needs Improvement (12 unique verbs)
+                        <span class="mr-2">❌</span> <strong>Action Verbs:</strong> Needs Improvement (12 unique verbs)
                     </p>
                 </div>
             </section>
@@ -98,9 +98,9 @@
                         Top Strengths
                     </h3>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li>\textbf{High Keyword Density:} Excellent use of 'Python,' 'AWS,' and 'Agile.'</li>
-                        <li>\textbf{Quantifiable Results:} Used 8+ metrics (e.g., increased by 15\%) in experience sections.</li>
-                        <li>\textbf{Clean Formatting:} Sections are clearly delineated, ensuring 95\% ATS readability.</li>
+                        <li><strong>High Keyword Density:</strong> Excellent use of 'Python,' 'AWS,' and 'Agile.'</li>
+                        <li><strong>Quantifiable Results:</strong> Used 8+ metrics (e.g., increased by 15%) in experience sections.</li>
+                        <li><strong>Clean Formatting:</strong> Sections are clearly delineated, ensuring 95% ATS readability.</li>
                     </ul>
                 </div>
 
@@ -110,12 +110,74 @@
                         Areas for Improvement
                     </h3>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li>\textbf{Summary Vague:} Summary is too generic; specify years of experience and key technologies.</li>
-                        <li>\textbf{Skill Dumping:} Group soft skills separately from technical skills for clarity.</li>
-                        <li>\textbf{Experience Gaps:} The gap between 2018 and 2020 should be explained briefly (e.g., freelance, caregiving, further study).</li>
+                        <li><strong>Summary Vague:</strong> Summary is too generic; specify years of experience and key technologies.</li>
+                        <li><strong>Skill Dumping:</strong> Group soft skills separately from technical skills for clarity.</li>
+                        <li><strong>Experience Gaps:</strong> The gap between 2018 and 2020 should be explained briefly (e.g., freelance, caregiving, further study).</li>
                     </ul>
                 </div>
+            </section>
+            
+            <section class="mt-8 bg-yellow-50 p-6 rounded-xl border-l-4 border-warning shadow-md">
+                <h3 class="text-2xl font-bold text-warning mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Target Keyword Analysis
+                </h3>
+                <p class="mb-3 text-gray-700">
+                    Your CV matched <strong>78\%</strong> of the skills found in top Senior Software Engineer listings.
+                </p>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="py-2">Keyword</th>
+                            <th class="py-2">Status</th>
+                            <th class="py-2">Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 text-gray-800">
+                        <tr>
+                            <td class="py-2"><strong>CI/CD</strong></td>
+                            <td class="py-2 text-secondary">Found (5 mentions)</td>
+                            <td class="py-2">Strong match.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2"><strong>Microservices</strong></td>
+                            <td class="py-2 text-danger">Missing</td>
+                            <td class="py-2">Crucial for Senior roles; include if relevant experience exists.</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2"><strong>Docker/Kubernetes</strong></td>
+                            <td class="py-2 text-warning">Partial (Docker only)</td>
+                            <td class="py-2">Specify experience with Kubernetes if applicable.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-                <div class="bg-yellow-50 p-6 rounded-xl border-l-4 border-warning shadow-md md:col-span-2">
-                    <h3 class="text-2xl font-bold text-warning mb-4 flex items-center">
-                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M
+            <section class="mt-8 bg-primary/5 p-6 rounded-xl border-l-4 border-primary shadow-md">
+                <h3 class="text-2xl font-bold text-primary mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6 1.111l-.452.222M21 12l-1 1h-4.663M3 12l1 1h4.663M12 21v-1m-4.522-1.447l-.452-.222M3 5.111l.452.222m16.052 9.088l.452.222M12 3c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8z"></path></svg>
+                    Tips to Boost Your CV Score
+                </h3>
+                <ul class="list-disc list-inside space-y-3 text-gray-700 ml-4">
+                    <li><strong>Quantify Everything:</strong> Replace vague descriptions (e.g., "managed projects") with metrics (e.g., "managed 5 projects, delivered 95\% on time").</li>
+                    <li><strong>Use Action Verbs:</strong> Start every bullet point in your experience section with a strong action verb (e.g., *Architected*, *Spearheaded*, *Optimized*).</li>
+                    <li><strong>Mirror the JD:</strong> Use exact phrasing for skills and experience mentioned in the target job description to maximize keyword matching.</li>
+                    <li><strong>Optimize Skills Section:</strong> Clearly categorize technical skills (languages, frameworks) separate from soft skills to aid parsing.</li>
+                </ul>
+            </section>
+            
+            <div class="mt-10 text-center">
+                <p class="text-lg text-gray-600 mb-4">
+                    Improve your score and get hired faster.
+                </p>
+                <a href="CVUploadPage.html"
+                    class="inline-flex items-center px-8 py-3 bg-primary text-white font-semibold text-lg rounded-full shadow-lg hover:bg-primary/90 transition duration-300 transform hover:scale-105">
+                    Revise and Re-Analyze Your CV
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
