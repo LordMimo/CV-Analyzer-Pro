@@ -3,236 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Upload Portal</title>
-    <!-- Load Tailwind CSS -->
+    <title>Upload Your CV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom font import for better aesthetics */
+        /* Shared styling from index.html */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #f7f9fb;
             min-height: 100vh;
+        }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1e40af', 
+                        'secondary': '#10b981',
+                    }
+                }
+            }
+        }
+        .content-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px); 
             padding: 1rem;
         }
     </style>
 </head>
 <body>
 
-<div id="app" class="w-full max-w-lg bg-white p-8 md:p-10 rounded-xl shadow-2xl transition-all duration-300">
-    <header class="text-center mb-8">
-        <h1 class="text-3xl font-extrabold text-gray-800">Upload Your CV</h1>
-        <p class="text-gray-500 mt-2">PDF or DOCX, Max 5MB</p>
-    </header>
-
-    <form id="uploadForm" class="space-y-6">
-        <!-- File Input -->
-        <div>
-            <label for="cvFile" class="block text-sm font-medium text-gray-700 mb-2">Select CV File</label>
-            <input type="file" id="cvFile" name="cvFile" accept=".pdf, .docx" required
-                   class="block w-full text-sm text-gray-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-lg file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-indigo-50 file:text-indigo-600
-                          hover:file:bg-indigo-100
-                          border border-gray-300 rounded-lg p-3 cursor-pointer">
+    <nav class="bg-white shadow-md w-full p-4 flex justify-center sticky top-0 z-10">
+        <div class="flex space-x-8 text-lg font-medium">
+            <a href="index.html" class="text-gray-600 hover:text-secondary transition duration-150">Home</a>
+            <a href="CVUploadPage.html" class="text-primary hover:text-secondary transition duration-150 font-bold">Upload CV</a>
+            <a href="ResultsPageUI.html" class="text-gray-600 hover:text-secondary transition duration-150">View Results</a>
         </div>
+    </nav>
 
-        <!-- Validation Message Area -->
-        <div id="message" class="hidden p-3 rounded-lg text-sm transition-all duration-300"></div>
+    <div class="content-wrapper">
+        <main class="w-full max-w-2xl bg-white shadow-xl rounded-3xl p-8 md:p-12 text-center">
 
-        <!-- Progress Bar Container -->
-        <div id="progressBarContainer" class="hidden">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Upload Progress</label>
-            <div class="w-full bg-gray-200 rounded-full h-3.5">
-                <div id="progressBar" class="bg-indigo-600 h-3.5 rounded-full text-xs font-medium text-white text-center p-0.5" style="width: 0%">
+            <header class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-primary mb-2">
+                    Upload Your CV for Instant Analysis
+                </h1>
+                <p class="text-gray-600">
+                    We accept PDF and DOCX formats. Your CV is analyzed instantly.
+                </p>
+            </header>
+
+            <form id="cvUploadForm" onsubmit="handleUpload(event)" class="space-y-6">
+
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 cursor-pointer hover:border-secondary transition duration-200">
+                    <input type="file" id="cvFile" name="cvFile" accept=".pdf,.docx" required class="hidden">
+                    <label for="cvFile" class="flex flex-col items-center justify-center space-y-3">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v1h-1M6 16h12a2 2 0 002-2v-3a2 2 0 00-2-2H6a2 2 0 00-2 2v3a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-gray-600 font-medium" id="uploadLabel">
+                            Drag and drop your CV here, or click to browse.
+                        </p>
+                        <p class="text-sm text-gray-400">
+                            (PDF or DOCX only, Max 5MB)
+                        </p>
+                    </label>
                 </div>
-            </div>
-            <p id="progressText" class="text-xs text-gray-500 mt-1 text-right">0%</p>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" id="submitButton"
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50"
-                disabled>
-            Upload CV
-        </button>
-    </form>
-</div>
-
-<script>
-    const form = document.getElementById('uploadForm');
-    const fileInput = document.getElementById('cvFile');
-    const messageDiv = document.getElementById('message');
-    const submitButton = document.getElementById('submitButton');
-    const progressBarContainer = document.getElementById('progressBarContainer');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-
-    // Constants for validation
-    const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
-    const ALLOWED_MIMES = [
-        'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // DOCX
-    ];
-    const ALLOWED_EXTENSIONS = ['.pdf', '.docx'];
-
-    // --- Utility Functions ---
-
-    /**
-     * Displays a validation or status message.
-     * @param {string} text The message content.
-     * @param {string} type 'success', 'error', or 'info'.
-     */
-    function displayMessage(text, type) {
-        // Clear previous classes
-        messageDiv.className = 'p-3 rounded-lg text-sm transition-all duration-300';
-
-        switch (type) {
-            case 'success':
-                messageDiv.classList.add('bg-green-100', 'text-green-800');
-                break;
-            case 'error':
-                messageDiv.classList.add('bg-red-100', 'text-red-800');
-                break;
-            case 'info':
-            default:
-                messageDiv.classList.add('bg-blue-100', 'text-blue-800');
-                break;
-        }
-
-        messageDiv.textContent = text;
-        messageDiv.classList.remove('hidden');
-    }
-
-    /**
-     * Checks if the selected file is valid (type and size).
-     * @param {File} file The file object.
-     * @returns {boolean} True if valid, false otherwise.
-     */
-    function validateFile(file) {
-        if (!file) {
-            displayMessage('Please select a file to upload.', 'error');
-            return false;
-        }
-
-        // 1. Size Validation
-        if (file.size > MAX_FILE_SIZE_BYTES) {
-            const maxSizeMB = MAX_FILE_SIZE_BYTES / (1024 * 1024);
-            displayMessage(`File size exceeds the maximum limit of ${maxSizeMB}MB.`, 'error');
-            return false;
-        }
-
-        // 2. Type Validation (checking extension for broader support)
-        const fileName = file.name.toLowerCase();
-        const isValidType = ALLOWED_EXTENSIONS.some(ext => fileName.endsWith(ext));
-
-        // Note: MIME type checking (file.type) is generally more reliable but can be spoofed.
-        // We'll stick to a combination of input 'accept' attribute and extension check here.
-        if (!isValidType) {
-            displayMessage('Invalid file type. Only PDF (.pdf) and DOCX (.docx) files are allowed.', 'error');
-            return false;
-        }
-
-        // Clear any previous error messages
-        messageDiv.classList.add('hidden');
-        return true;
-    }
-
-    // --- Event Listeners ---
-
-    // Enable/Disable button based on file selection
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-            const isValid = validateFile(fileInput.files[0]);
-            submitButton.disabled = !isValid;
-        } else {
-            submitButton.disabled = true;
-            messageDiv.classList.add('hidden');
-        }
-        // Hide progress bar on new file selection
-        progressBarContainer.classList.add('hidden');
-        progressBar.style.width = '0%';
-        progressText.textContent = '0%';
-    });
-
-    // Form Submission Handler (Simulated Upload)
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const file = fileInput.files[0];
-
-        // Re-validate just before submission
-        if (!validateFile(file)) {
-            submitButton.disabled = true;
-            return;
-        }
-
-        // Start Simulation
-        submitButton.disabled = true;
-        fileInput.disabled = true;
-        displayMessage(`Uploading "${file.name}"...`, 'info');
-        progressBarContainer.classList.remove('hidden');
-
-        let progress = 0;
-        const totalDuration = 2500; // 2.5 seconds total simulation time
-        const intervalTime = 100; // Update every 100ms
-        const increment = (intervalTime / totalDuration) * 100;
-
-        const uploadInterval = setInterval(() => {
-            progress += increment;
-
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(uploadInterval);
                 
-                // Final update and success message
-                updateProgressBar(100);
-                displayMessage(`Success! Your CV "${file.name}" has been uploaded.`, 'success');
-                
-                // Reset form state after a short delay
-                setTimeout(resetForm, 1500);
+                <input type="text" placeholder="Target Job Title (e.g., Senior Software Engineer)" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition duration-150">
 
-            } else {
-                updateProgressBar(progress);
+                <button type="submit" id="analyzeButton"
+                    class="w-full inline-flex items-center justify-center px-8 py-4 bg-secondary text-white font-semibold text-xl rounded-lg shadow-lg hover:bg-secondary/90 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-secondary/50">
+                    Analyze CV & See Score Instantly
+                </button>
+            </form>
+
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('cvFile').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Drag and drop your CV here, or click to browse.';
+            document.getElementById('uploadLabel').textContent = fileName;
+        });
+
+        // ⭐ THE CORE LOGIC FOR REDIRECTION ⭐
+        function handleUpload(event) {
+            event.preventDefault(); // Stop the default form submission
+            
+            const fileInput = document.getElementById('cvFile');
+            if (fileInput.files.length === 0) {
+                alert("Please select a CV file to upload.");
+                return;
             }
-        }, intervalTime);
-    });
 
-    /**
-     * Updates the visual state of the progress bar.
-     * @param {number} percentage The current percentage (0-100).
-     */
-    function updateProgressBar(percentage) {
-        const p = Math.min(100, Math.round(percentage));
-        progressBar.style.width = `${p}%`;
-        progressText.textContent = `${p}%`;
-        // Add a pulsing effect when actively uploading (0 < p < 100)
-        if (p > 0 && p < 100) {
-            progressBar.classList.add('animate-pulse');
-        } else {
-            progressBar.classList.remove('animate-pulse');
+            const button = document.getElementById('analyzeButton');
+            button.textContent = 'Processing... Please Wait';
+            button.disabled = true;
+
+            // 1. SIMULATE INTERNAL SCORING PROCESS (Placeholder for your backend API call)
+            // In a real application, you would send the file and job title to a server here.
+            
+            // 2. TIMED REDIRECTION to simulate processing time
+            setTimeout(() => {
+                // After the simulated process, redirect the user to the results page.
+                window.location.href = 'ResultsPageUI.html';
+            }, 2000); // 2-second delay to show 'Processing' state
         }
-    }
-
-    /**
-     * Resets the form to its initial state.
-     */
-    function resetForm() {
-        form.reset();
-        submitButton.disabled = true;
-        fileInput.disabled = false;
-        progressBarContainer.classList.add('hidden');
-        progressBar.style.width = '0%';
-        progressText.textContent = '0%';
-        messageDiv.classList.add('hidden'); // Optionally clear the success message
-    }
-
-</script>
+    </script>
 
 </body>
 </html>
