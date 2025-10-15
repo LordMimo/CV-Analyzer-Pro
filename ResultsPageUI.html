@@ -3,246 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clean Data Analysis Results</title>
+    <title>CV Analysis Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            /* Color Palette */
-            --color-success: #4CAF50; /* Green */
-            --color-warning: #FFC107; /* Yellow */
-            --color-danger: #F44336; /* Red */
-            --color-primary: #2196F3; /* Blue */
-            --color-text: #333;
-            --color-bg: #f5f7fa;
-            --color-card-bg: #ffffff;
-        }
-
+        /* Shared styling from index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--color-bg);
-            color: var(--color-text);
-            direction: ltr;
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            min-height: 100vh;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            display: grid;
-            gap: 20px;
-        }
-
-        .card {
-            background-color: var(--color-card-bg);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            color: var(--color-primary);
-        }
-
-        /* 1. Overall Score Section */
-        .overall-score {
-            text-align: center;
-        }
-
-        .score-circle {
-            width: 150px;
-            height: 150px;
-            margin: 20px auto;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--color-card-bg);
-            /* Conic gradient for the progress display (85% score example) */
-            background: conic-gradient(
-                var(--color-success) 85%,
-                #ddd 85%
-            );
-        }
-
-        /* 2. Keyword Match Progress Bars */
-        .progress-item {
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            background-color: #eee;
-            border-radius: 5px;
-            overflow: hidden;
-            height: 25px;
-            margin-top: 5px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--color-card-bg);
-            font-weight: bold;
-            text-align: center;
-            transition: width 0.5s ease-out;
-        }
-
-        /* Color classes for progress bars */
-        .progress-fill.green { background-color: var(--color-success); }
-        .progress-fill.yellow { background-color: var(--color-warning); }
-        .progress-fill.red { background-color: var(--color-danger); }
-
-        /* 3. Extracted Information Table */
-        .extracted-info table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .extracted-info th, .extracted-info td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .extracted-info th {
-            background-color: #f9f9f9;
-            font-weight: bold;
-        }
-
-        /* Color-coded Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            font-weight: bold;
-            color: var(--color-card-bg);
-        }
-
-        .status-complete { background-color: var(--color-success); }
-        .status-incomplete { background-color: var(--color-warning); }
-        .status-missing { background-color: var(--color-danger); }
-
-
-        /* Layout Grid */
-        .grid-3 {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-
-        @media (max-width: 900px) {
-            .grid-3 {
-                grid-template-columns: 1fr;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1e40af', /* Deep Blue */
+                        'secondary': '#10b981', /* Emerald Green */
+                        'warning': '#f59e0b', /* Amber */
+                        'danger': '#ef4444', /* Red */
+                    }
+                }
             }
+        }
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Custom circle for the score display */
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background-color: #f0fdf4; /* Very light secondary */
+            border: 8px solid #34d399; /* Medium secondary */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
 <body>
 
-<div class="container grid-3">
-    
-    <div class="card overall-score">
-        <h2>Overall Score</h2>
-        <div class="score-circle">
-            85%
+    <nav class="bg-white shadow-md w-full p-4 flex justify-center sticky top-0 z-10">
+        <div class="flex space-x-8 text-lg font-medium">
+            <a href="index.html" class="text-gray-600 hover:text-secondary transition duration-150">Home</a>
+            <a href="CVUploadPage.html" class="text-gray-600 hover:text-secondary transition duration-150">Upload CV</a>
+            <a href="ResultsPageUI.html" class="text-primary hover:text-secondary transition duration-150 font-bold">View Results</a>
         </div>
-        <p style="font-size: 1.2em; color: var(--color-success);">✅ Very Good Match</p>
-    </div>
+    </nav>
 
-    <div class="card">
-        <h2>Analysis Summary</h2>
-        <div class="summary-list">
-            <p><strong>Match Status:</strong> <span style="color: var(--color-success); font-weight: bold;">Good</span></p>
-            <p><strong>Items Extracted:</strong> 12 / 15</p>
-            <p><strong>Total Keywords Matched:</strong> 28</p>
-            <p><strong>Report Date:</strong> 2025-10-14</p>
-        </div>
-    </div>
-    
-    <div class="card keyword-matches">
-        <h2>Keyword Match Breakdown</h2>
+    <div class="content-wrapper">
+        <main class="w-full max-w-4xl bg-white shadow-xl rounded-3xl p-8 md:p-12">
 
-        <div class="progress-item">
-            <label>Core Requirements (95%)</label>
-            <div class="progress-bar">
-                <div class="progress-fill green" style="width: 95%;">95%</div>
-            </div>
-        </div>
+            <header class="mb-10 text-center">
+                <h1 class="text-4xl font-extrabold text-primary mb-2">
+                    Your CV Analysis Complete!
+                </h1>
+                <p class="text-xl text-gray-600">
+                    Target Role: \textbf{Senior Software Engineer}
+                </p>
+            </header>
 
-        <div class="progress-item">
-            <label>Technical Terms (78%)</label>
-            <div class="progress-bar">
-                <div class="progress-fill yellow" style="width: 78%;">78%</div>
-            </div>
-        </div>
+            <section class="flex flex-col md:flex-row items-center justify-center gap-12 mb-10 border-b pb-8">
+                
+                <div class="score-circle">
+                    <span class="text-6xl font-extrabold text-secondary">78</span>
+                    <span class="text-sm font-semibold text-gray-700 mt-1">/ 100 Score</span>
+                </div>
 
-        <div class="progress-item">
-            <label>Secondary Features (62%)</label>
-            <div class="progress-bar">
-                <div class="progress-fill yellow" style="width: 62%;">62%</div>
-            </div>
-        </div>
+                <div class="text-left space-y-3">
+                    <h2 class="text-2xl font-bold text-gray-800">Quick Metrics:</h2>
+                    <p class="text-lg text-secondary font-medium flex items-center">
+                        <span class="mr-2">✅</span> \textbf{ATS Compatibility:} Excellent (95\%)
+                    </p>
+                    <p class="text-lg text-primary font-medium flex items-center">
+                        <span class="mr-2">⭐</span> \textbf{Keyword Match:} Moderate (78\%)
+                    </p>
+                    <p class="text-lg text-danger font-medium flex items-center">
+                        <span class="mr-2">❌</span> \textbf{Action Verbs:} Needs Improvement (12 unique verbs)
+                    </p>
+                </div>
+            </section>
 
-        <div class="progress-item">
-            <label>Compliance & Legal (45%)</label>
-            <div class="progress-bar">
-                <div class="progress-fill red" style="width: 45%;">45%</div>
-            </div>
-        </div>
-    </div>
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="bg-green-50 p-6 rounded-xl border-l-4 border-secondary shadow-md">
+                    <h3 class="text-2xl font-bold text-secondary mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Top Strengths
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>\textbf{High Keyword Density:} Excellent use of 'Python,' 'AWS,' and 'Agile.'</li>
+                        <li>\textbf{Quantifiable Results:} Used 8+ metrics (e.g., increased by 15\%) in experience sections.</li>
+                        <li>\textbf{Clean Formatting:} Sections are clearly delineated, ensuring 95\% ATS readability.</li>
+                    </ul>
+                </div>
 
-</div>
+                <div class="bg-red-50 p-6 rounded-xl border-l-4 border-danger shadow-md">
+                    <h3 class="text-2xl font-bold text-danger mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Areas for Improvement
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>\textbf{Summary Vague:} Summary is too generic; specify years of experience and key technologies.</li>
+                        <li>\textbf{Skill Dumping:} Group soft skills separately from technical skills for clarity.</li>
+                        <li>\textbf{Experience Gaps:} The gap between 2018 and 2020 should be explained briefly (e.g., freelance, caregiving, further study).</li>
+                    </ul>
+                </div>
 
-<div class="card extracted-info" style="margin-top: 20px;">
-    <h2>Extracted Information</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Data Field</th>
-                <th>Extracted Value</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Project Title</td>
-                <td>"Q4 Redesign Initiative"</td>
-                <td><span class="status-badge status-complete">Complete ✅</span></td>
-            </tr>
-            <tr>
-                <td>Client Name</td>
-                <td>Acme Corp</td>
-                <td><span class="status-badge status-complete">Complete ✅</span></td>
-            </tr>
-            <tr>
-                <td>Start Date</td>
-                <td>2025-11-01</td>
-                <td><span class="status-badge status-complete">Complete ✅</span></td>
-            </tr>
-            <tr>
-                <td>Budget Amount</td>
-                <td>$50,000</td>
-                <td><span class="status-badge status-complete">Complete ✅</span></td>
-            </tr>
-            <tr>
-                <td>Team Lead</td>
-                <td>*N/A*</td>
-                <td><span class="status-badge status-missing">Missing ❌</span></td>
-            </tr>
-            <tr>
-                <td>Deliverable Count</td>
-                <td>4 (4 of 6 Identified)</td>
-                <td><span class="status-badge status-incomplete">Incomplete ⚠️</span></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-</body>
-</html>
+                <div class="bg-yellow-50 p-6 rounded-xl border-l-4 border-warning shadow-md md:col-span-2">
+                    <h3 class="text-2xl font-bold text-warning mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M
