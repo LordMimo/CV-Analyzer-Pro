@@ -37,14 +37,32 @@
             width: 180px;
             height: 180px;
             border-radius: 50%;
-            background-color: #f0fdf4; /* Very light secondary */
-            border: 8px solid #34d399; /* Medium secondary */
+            background-color: #f0fdf4; /* Very light secondary - default */
+            border: 8px solid #34d399; /* Medium secondary - default */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+
+        /* Utility classes for dynamic border/background */
+        .score-circle-good {
+            background-color: #f0fdf4;
+            border-color: #34d399; /* Green */
+        }
+        .score-circle-moderate {
+            background-color: #fffbeb;
+            border-color: #f59e0b; /* Amber */
+        }
+        .score-circle-low {
+            background-color: #fef2f2;
+            border-color: #ef4444; /* Red */
+        }
+
+        .text-good { color: #10b981; }
+        .text-moderate { color: #f59e0b; }
+        .text-low { color: #ef4444; }
     </style>
 </head>
 <body>
@@ -65,27 +83,27 @@
                     Your CV Analysis Complete!
                 </h1>
                 <p class="text-xl text-gray-600">
-                    Target Role: <strong>Senior Software Engineer</strong>
+                    Target Role: <strong id="target-role"></strong>
                 </p>
             </header>
 
             <section class="flex flex-col md:flex-row items-center justify-center gap-12 mb-10 border-b pb-8">
                 
-                <div class="score-circle">
-                    <span class="text-6xl font-extrabold text-secondary">78</span>
+                <div class="score-circle" id="score-circle">
+                    <span class="text-6xl font-extrabold" id="overall-score"></span>
                     <span class="text-sm font-semibold text-gray-700 mt-1">/ 100 Score</span>
                 </div>
 
                 <div class="text-left space-y-3">
                     <h2 class="text-2xl font-bold text-gray-800">Quick Metrics:</h2>
-                    <p class="text-lg text-secondary font-medium flex items-center">
-                        <span class="mr-2">✅</span> <strong>ATS Compatibility:</strong> Excellent (95%)
+                    <p class="text-lg font-medium flex items-center" id="metric-ats">
+                        <span class="mr-2" id="ats-icon"></span> <strong id="ats-label">ATS Compatibility:</strong> <span id="ats-value"></span>
                     </p>
-                    <p class="text-lg text-primary font-medium flex items-center">
-                        <span class="mr-2">⭐</span> <strong>Keyword Match:</strong> Moderate (78%)
+                    <p class="text-lg font-medium flex items-center" id="metric-keyword">
+                        <span class="mr-2" id="keyword-icon"></span> <strong id="keyword-label">Keyword Match:</strong> <span id="keyword-value"></span>
                     </p>
-                    <p class="text-lg text-danger font-medium flex items-center">
-                        <span class="mr-2">❌</span> <strong>Action Verbs:</strong> Needs Improvement (12 unique verbs)
+                    <p class="text-lg font-medium flex items-center" id="metric-action-verbs">
+                        <span class="mr-2" id="verbs-icon"></span> <strong id="verbs-label">Action Verbs:</strong> <span id="verbs-value"></span>
                     </p>
                 </div>
             </section>
@@ -97,11 +115,8 @@
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Top Strengths
                     </h3>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li><strong>High Keyword Density:</strong> Excellent use of 'Python,' 'AWS,' and 'Agile.'</li>
-                        <li><strong>Quantifiable Results:</strong> Used 8+ metrics (e.g., increased by 15%) in experience sections.</li>
-                        <li><strong>Clean Formatting:</strong> Sections are clearly delineated, ensuring 95% ATS readability.</li>
-                    </ul>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700" id="strengths-list">
+                        </ul>
                 </div>
 
                 <div class="bg-red-50 p-6 rounded-xl border-l-4 border-danger shadow-md">
@@ -109,11 +124,8 @@
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Areas for Improvement
                     </h3>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li><strong>Summary Vague:</strong> Summary is too generic; specify years of experience and key technologies.</li>
-                        <li><strong>Skill Dumping:</strong> Group soft skills separately from technical skills for clarity.</li>
-                        <li><strong>Experience Gaps:</strong> The gap between 2018 and 2020 should be explained briefly (e.g., freelance, caregiving, further study).</li>
-                    </ul>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700" id="improvements-list">
+                        </ul>
                 </div>
             </section>
             
@@ -122,8 +134,8 @@
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     Target Keyword Analysis
                 </h3>
-                <p class="mb-3 text-gray-700">
-                    Your CV matched <strong>78\%</strong> of the skills found in top of your profession.
+                <p class="mb-3 text-gray-700" id="keyword-match-summary">
+                    Your CV matched <strong>78%</strong> of the skills found in top of your profession.
                 </p>
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead>
@@ -133,37 +145,18 @@
                             <th class="py-2">Recommendation</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 text-gray-800">
-                        <tr>
-                            <td class="py-2"><strong>CI/CD</strong></td>
-                            <td class="py-2 text-secondary">Found (5 mentions)</td>
-                            <td class="py-2">Strong match.</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2"><strong>Microservices</strong></td>
-                            <td class="py-2 text-danger">Missing</td>
-                            <td class="py-2">Crucial for Senior roles; include if relevant experience exists.</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2"><strong>Docker/Kubernetes</strong></td>
-                            <td class="py-2 text-warning">Partial (Docker only)</td>
-                            <td class="py-2">Specify experience with Kubernetes if applicable.</td>
-                        </tr>
-                    </tbody>
+                    <tbody class="divide-y divide-gray-200 text-gray-800" id="keyword-table-body">
+                        </tbody>
                 </table>
             </section>
-
+            
             <section class="mt-8 bg-primary/5 p-6 rounded-xl border-l-4 border-primary shadow-md">
                 <h3 class="text-2xl font-bold text-primary mb-4 flex items-center">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6 1.111l-.452.222M21 12l-1 1h-4.663M3 12l1 1h4.663M12 21v-1m-4.522-1.447l-.452-.222M3 5.111l.452.222m16.052 9.088l.452.222M12 3c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8z"></path></svg>
                     Tips to Boost Your CV Score
                 </h3>
-                <ul class="list-disc list-inside space-y-3 text-gray-700 ml-4">
-                    <li><strong>Quantify Everything:</strong> Replace vague descriptions (e.g., "managed projects") with metrics (e.g., "managed 5 projects, delivered 95\% on time").</li>
-                    <li><strong>Use Action Verbs:</strong> Start every bullet point in your experience section with a strong action verb (e.g., *Architected*, *Spearheaded*, *Optimized*).</li>
-                    <li><strong>Mirror the JD:</strong> Use exact phrasing for skills and experience mentioned in the target job description to maximize keyword matching.</li>
-                    <li><strong>Optimize Skills Section:</strong> Clearly categorize technical skills (languages, frameworks) separate from soft skills to aid parsing.</li>
-                </ul>
+                <ul class="list-disc list-inside space-y-3 text-gray-700 ml-4" id="tips-list">
+                    </ul>
             </section>
             
             <div class="mt-10 text-center">
@@ -179,5 +172,188 @@
         </main>
     </div>
 
+<script>
+    // 1. Data Structure for Dynamic Scenarios
+    const scenarios = {
+        // SCENARIO 1: Senior Software Engineer (High Score)
+        'seniorSoftwareEngineer': {
+            role: 'Senior Software Engineer',
+            score: 78,
+            metrics: {
+                ats: {
+                    value: 'Excellent (95%)',
+                    label: 'ATS Compatibility:',
+                    status: 'good', // Used for styling
+                    icon: '✅'
+                },
+                keyword: {
+                    value: 'Moderate (78%)',
+                    label: 'Keyword Match:',
+                    status: 'moderate',
+                    icon: '⭐'
+                },
+                actionVerbs: {
+                    value: 'Needs Improvement (12 unique verbs)',
+                    label: 'Action Verbs:',
+                    status: 'low',
+                    icon: '❌'
+                },
+            },
+            strengths: [
+                "High Keyword Density: Excellent use of 'Python,' 'AWS,' and 'Agile.'",
+                "Quantifiable Results: Used 8+ metrics (e.g., increased by 15%) in experience sections.",
+                "Clean Formatting: Sections are clearly delineated, ensuring 95% ATS readability."
+            ],
+            improvements: [
+                "Summary Vague: Summary is too generic; specify years of experience and key technologies.",
+                "Skill Dumping: Group soft skills separately from technical skills for clarity.",
+                "Experience Gaps: The gap between 2018 and 2020 should be explained briefly (e.g., freelance, caregiving, further study)."
+            ],
+            keywords: [
+                { keyword: 'CI/CD', status: 'Found (5 mentions)', recommendation: 'Strong match.', className: 'text-secondary' },
+                { keyword: 'Microservices', status: 'Missing', recommendation: 'Crucial for Senior roles; include if relevant experience exists.', className: 'text-danger' },
+                { keyword: 'Docker/Kubernetes', status: 'Partial (Docker only)', recommendation: 'Specify experience with Kubernetes if applicable.', className: 'text-warning' }
+            ],
+            tips: [
+                "Quantify Everything: Replace vague descriptions (e.g., 'managed projects') with metrics (e.g., 'managed 5 projects, delivered 95% on time').",
+                "Use Action Verbs: Start every bullet point in your experience section with a strong action verb (e.g., *Architected*, *Spearheaded*, *Optimized*).",
+                "Mirror the JD: Use exact phrasing for skills and experience mentioned in the target job description to maximize keyword matching.",
+                "Optimize Skills Section: Clearly categorize technical skills (languages, frameworks) separate from soft skills to aid parsing."
+            ]
+        },
+
+        // SCENARIO 2: Marketing Coordinator (Moderate Score)
+        'marketingCoordinator': {
+            role: 'Marketing Coordinator',
+            score: 61,
+            metrics: {
+                ats: {
+                    value: 'Good (85%)',
+                    label: 'ATS Compatibility:',
+                    status: 'moderate',
+                    icon: '🟡'
+                },
+                keyword: {
+                    value: 'Low (55%)',
+                    label: 'Keyword Match:',
+                    status: 'low',
+                    icon: '❌'
+                },
+                actionVerbs: {
+                    value: 'Acceptable (18 unique verbs)',
+                    label: 'Action Verbs:',
+                    status: 'good',
+                    icon: '✅'
+                },
+            },
+            strengths: [
+                "Strong Action Verbs: Used a variety of impactful verbs like 'Executed,' 'Analyzed,' and 'Launched.'",
+                "Clear Role Progression: Easy to follow career path, showing growth in responsibilities.",
+                "Targeted Tools: Prominently featured tools like 'HubSpot' and 'Google Analytics.'"
+            ],
+            improvements: [
+                "Missing Metrics: Results are too qualitative; quantify campaign success (e.g., increased conversion rate by 10%).",
+                "Design Issues: File format or layout may cause issues with older ATS systems (less than 85% readability).",
+                "Soft Skills Clutter: Move generic soft skills out of the summary."
+            ],
+            keywords: [
+                { keyword: 'SEO/SEM', status: 'Partial (SEO only)', recommendation: 'Elaborate on SEM campaigns and budgets managed.', className: 'text-warning' },
+                { keyword: 'A/B Testing', status: 'Missing', recommendation: 'Fundamental skill; include any experience with conversion optimization.', className: 'text-danger' },
+                { keyword: 'Content Strategy', status: 'Found (4 mentions)', recommendation: 'Strong match.', className: 'text-secondary' }
+            ],
+            tips: [
+                "Quantify Everything: Replace vague descriptions (e.g., 'managed projects') with metrics (e.g., 'managed 5 projects, delivered 95% on time').",
+                "Use Action Verbs: Start every bullet point in your experience section with a strong action verb (e.g., *Architected*, *Spearheaded*, *Optimized*).",
+                "Mirror the JD: Use exact phrasing for skills and experience mentioned in the target job description to maximize keyword matching.",
+                "Optimize Skills Section: Clearly categorize technical skills (languages, frameworks) separate from soft skills to aid parsing."
+            ]
+        }
+    };
+
+    // 2. Function to Get Status Class and Score Text Color
+    const getStatusStyles = (status, isScore = false) => {
+        if (isScore) {
+            if (status >= 75) return { circleClass: 'score-circle-good', textClass: 'text-secondary' };
+            if (status >= 50) return { circleClass: 'score-circle-moderate', textClass: 'text-warning' };
+            return { circleClass: 'score-circle-low', textClass: 'text-danger' };
+        } else {
+            if (status === 'good') return { textClass: 'text-secondary' };
+            if (status === 'moderate') return { textClass: 'text-warning' };
+            if (status === 'low') return { textClass: 'text-danger' };
+            return { textClass: 'text-gray-800' }; // default
+        }
+    };
+
+    // 3. Main function to populate the DOM
+    const populateResults = (scenarioKey) => {
+        const data = scenarios[scenarioKey];
+
+        // --- Header and Score ---
+        document.getElementById('target-role').textContent = data.role;
+        document.getElementById('overall-score').textContent = data.score;
+        const scoreCircle = document.getElementById('score-circle');
+        const scoreStyles = getStatusStyles(data.score, true);
+        
+        // Remove existing score classes and apply new ones
+        scoreCircle.classList.remove('score-circle-good', 'score-circle-moderate', 'score-circle-low');
+        scoreCircle.classList.add(scoreStyles.circleClass);
+        document.getElementById('overall-score').classList.remove('text-secondary', 'text-warning', 'text-danger');
+        document.getElementById('overall-score').classList.add(scoreStyles.textClass);
+        
+        // --- Quick Metrics ---
+        Object.keys(data.metrics).forEach(key => {
+            const metric = data.metrics[key];
+            const prefix = key.toLowerCase();
+            const styles = getStatusStyles(metric.status);
+
+            document.getElementById(`${prefix}-icon`).textContent = metric.icon;
+            document.getElementById(`${prefix}-value`).textContent = metric.value;
+
+            const metricP = document.getElementById(`metric-${prefix}`);
+            // Remove previous color classes
+            metricP.classList.remove('text-primary', 'text-secondary', 'text-warning', 'text-danger');
+            // Add the new color class based on status
+            metricP.classList.add(styles.textClass.replace('text-', 'text-'));
+        });
+
+        // --- List Sections (Strengths, Improvements, Tips) ---
+        const populateList = (id, items) => {
+            const listElement = document.getElementById(id);
+            listElement.innerHTML = ''; // Clear existing content
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'text-gray-700';
+                li.innerHTML = item.replace(/\*(.*?)\*/g, '<strong>$1</strong>'); // Bolds text inside asterisks
+                listElement.appendChild(li);
+            });
+        };
+
+        populateList('strengths-list', data.strengths);
+        populateList('improvements-list', data.improvements);
+        populateList('tips-list', data.tips);
+
+        // --- Keyword Analysis Table ---
+        document.getElementById('keyword-match-summary').innerHTML = `Your CV matched <strong>${data.metrics.keyword.value.match(/\d+%/)[0]}</strong> of the skills found in top of your profession.`;
+        const tableBody = document.getElementById('keyword-table-body');
+        tableBody.innerHTML = ''; // Clear existing content
+
+        data.keywords.forEach(kw => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="py-2"><strong>${kw.keyword}</strong></td>
+                <td class="py-2 ${kw.className}">${kw.status}</td>
+                <td class="py-2">${kw.recommendation}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    };
+
+    // 4. Initialization: Choose which scenario to display on load
+    // You can change 'seniorSoftwareEngineer' to 'marketingCoordinator' to see the other scenario!
+    // In a real app, this key would come from an API or local storage.
+    const selectedScenario = 'seniorSoftwareEngineer'; 
+    populateResults(selectedScenario);
+
+</script>
 </body>
 </html>
