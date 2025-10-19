@@ -25,60 +25,133 @@
 
   <script>
     function analyzeCV() {
-      const text = document.getElementById("cvText").value.toLowerCase();
-      if (!text.trim()) {
-        alert("Please paste your CV text first!");
-        return;
-      }
+        const text = document.getElementById("cvText").value;
+        const lowerText = text.toLowerCase();
 
-      let score = 0;
-      let recommendations = [];
+        if (!lowerText.trim()) {
+            alert("Please paste your CV text first!");
+            return;
+        }
 
-      // 1️⃣ Keywords
-      const keywords = ["experience", "skills", "education", "project", "team", "communication"];
-      let keywordCount = 0;
-      keywords.forEach(word => {
-        if (text.includes(word)) keywordCount++;
-      });
-      score += (keywordCount / keywords.length) * 40; // max 40 points
+        let score = 0;
+        let recommendations = [];
+        const wordCount = lowerText.split(/\s+/).filter(word => word.length > 0).length;
 
-      if (keywordCount < 3) recommendations.push("Add more relevant keywords like 'skills', 'projects', or 'experience'.");
+        // --- 1. Scoring Components ---
 
-      // 2️⃣ Length
-      const wordCount = text.split(/\s+/).length;
-      if (wordCount < 150) {
-        score += 10; // short CV
-        recommendations.push("Your CV seems too short. Add more details about your roles or projects.");
-      } else if (wordCount < 400) {
-        score += 25; // good length
-      } else if (wordCount < 800) {
-        score += 20; // slightly long
-      } else {
-        score += 10; // too long
-        recommendations.push("Your CV might be too long. Try to make it more concise.");
-      }
+        // 1.1 SECTION STRUCTURE & LENGTH (Max 15 points)
+        let structurePoints = 0;
+        const requiredSections = ["education", "experience", "skills", "contact"];
+        requiredSections.forEach(section => {
+            if (lowerText.includes(section)) {
+                structurePoints += 3;
+            }
+        });
+        
+        // Bonus for length
+        if (wordCount >= 250 && wordCount <= 700) {
+            structurePoints += 3; // Ideal length bonus
+        } else if (wordCount > 700) {
+            recommendations.push("❌ **Conciseness:** Your CV might be too long. Aim for 1-2 pages of highly relevant content.");
+        } else {
+            recommendations.push("⚠️ **Detail:** Your CV seems too short. Add more detailed, results-oriented bullet points.");
+        }
+        score += Math.min(15, structurePoints);
 
-      // 3️⃣ Structure
-      let structurePoints = 0;
-      if (text.includes("education")) structurePoints += 10;
-      if (text.includes("experience")) structurePoints += 10;
-      if (text.includes("skills")) structurePoints += 10;
-      score += structurePoints; // max 30 points
+        // 1.2 QUANTIFIABILITY (Max 30 points)
+        // Check for numbers and percentages, which suggest metrics/results.
+        const quantifiablePattern = /(\d+[\+\-]?%?|increased|reduced|saved|managed|improved|built)\s+\d+/gi;
+        const metricsFound = (text.match(quantifiablePattern) || []).length;
+        let quantifiabilityPoints = Math.min(30, metricsFound * 5); // 6 metrics for max points
+        score += quantifiabilityPoints;
 
-      if (structurePoints < 20) recommendations.push("Make sure your CV includes sections like Education, Experience, and Skills.");
+        if (metricsFound < 4) {
+            recommendations.push(`⚠️ **Quantify Results:** Found only ${metricsFound} metrics. Replace "responsible for" tasks with numerical achievements (e.g., increased efficiency by 15%).`);
+        }
 
-      // Final adjustment
-      score = Math.min(100, Math.round(score));
+        // 1.3 IMPACTFUL LANGUAGE (Action Verbs) (Max 25 points)
+        // Looks for strong action verbs, common at the start of achievement bullets.
+        const strongActionVerbs = ["architected", "developed", "spearheaded", "optimized", "implemented", "managed", "designed", "resolved", "launched", "automated", "created"];
+        let verbCount = 0;
+        strongActionVerbs.forEach(verb => {
+            // Check for the verb followed by a capital letter (suggesting a new sentence/bullet)
+            const verbPattern = new RegExp('\\.\\s*' + verb + '|\\*\\s*' + verb, 'gi');
+            verbCount += (lowerText.match(verbPattern) || []).length;
+        });
+        
+        let verbPoints = Math.min(25, verbCount * 4); // 6-7 verbs for max points
+        score += verbPoints;
 
-      // Display results
-      document.getElementById("result").style.display = "block";
-      document.querySelector(".score").innerHTML = `🧠 CV Score: <strong>${score}/100</strong>`;
-      document.querySelector(".recommendations").innerHTML =
-        recommendations.length ? 
-        "📋 Recommendations:<br> - " + recommendations.join("<br> - ") :
-        "✅ Great job! Your CV looks well-structured and detailed.";
+        if (verbCount < 5) {
+             recommendations.push(`❌ **Action Verbs:** Use strong action verbs to start your bullet points. Found only ${verbCount} impactful verbs.`);
+        }
+
+        // 1.4 KEYWORD DENSITY & SPECIFICITY (Max 30 points)
+        // Focuses on common technical and soft skills.
+        const highValueKeywords = {
+            // Technical/Hard Skills
+            'technical': ["python", "java", "sql", "aws", "azure", "docker", "agile", "crm", "seo", "analytics", "marketing"],
+            // Soft/Role-specific Skills (often poorly articulated)
+            'soft': ["leadership", "communication", "problem-solving", "stakeholder", "collaboration", "budget"]
+        };
+
+        let keywordPoints = 0;
+        let missingKeywords = [];
+        
+        highValueKeywords.technical.forEach(word => {
+            if (lowerText.includes(word)) {
+                keywordPoints += 2;
+            }
+        });
+        highValueKeywords.soft.forEach(word => {
+            if (lowerText.includes(word)) {
+                keywordPoints += 1;
+            } else {
+                missingKeywords.push(word);
+            }
+        });
+
+        score += Math.min(30, keywordPoints);
+        
+        if (keywordPoints < 15) {
+            recommendations.push("⚠️ **Keyword Match:** Include more relevant industry-specific and technical skills for your target role.");
+        }
+        if (missingKeywords.length > 5) {
+            recommendations.push(`💡 **Soft Skills:** Try integrating terms like ${missingKeywords.slice(0, 3).join(', ')} into your experience descriptions.`);
+        }
+
+
+        // --- 2. Final Output ---
+
+        // Final score calculation (max 100)
+        score = Math.min(100, Math.round(score));
+        
+        // Determine score range for icon and emphasis
+        let scoreEmoji, scoreColor;
+        if (score >= 75) {
+            scoreEmoji = "🌟";
+            scoreColor = "green";
+        } else if (score >= 50) {
+            scoreEmoji = "🟡";
+            scoreColor = "orange";
+        } else {
+            scoreEmoji = "🚨";
+            scoreColor = "red";
+        }
+
+        // Display results
+        document.getElementById("result").style.display = "block";
+        document.querySelector(".score").innerHTML = 
+            `<span style="color:${scoreColor};">${scoreEmoji} CV Score: <strong>${score}/100</strong></span>`;
+        
+        if (recommendations.length === 0) {
+            document.querySelector(".recommendations").innerHTML = "✅ **Excellent Job!** Your CV is highly detailed, well-structured, and rich with impactful results.";
+        } else {
+            document.querySelector(".recommendations").innerHTML =
+                "📋 **Recommendations to Improve Your Score:**<br> - " + recommendations.join("<br> - ");
+        }
     }
-  </script>
+</script>
 
 </body>
 </html>
