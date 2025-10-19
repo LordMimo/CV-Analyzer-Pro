@@ -172,6 +172,8 @@
         </main>
     </div>
 
+// ... (Keep the HTML structure the same) ...
+
 <script>
     // 1. Data Structure for Dynamic Scenarios
     const scenarios = {
@@ -183,7 +185,7 @@
                 ats: {
                     value: 'Excellent (95%)',
                     label: 'ATS Compatibility:',
-                    status: 'good', // Used for styling
+                    status: 'good',
                     icon: '✅'
                 },
                 keyword: {
@@ -267,6 +269,53 @@
                 "Mirror the JD: Use exact phrasing for skills and experience mentioned in the target job description to maximize keyword matching.",
                 "Optimize Skills Section: Clearly categorize technical skills (languages, frameworks) separate from soft skills to aid parsing."
             ]
+        },
+        
+        // SCENARIO 3: Administrative Assistant (Low Score)
+        'administrativeAssistant': {
+            role: 'Administrative Assistant',
+            score: 42,
+            metrics: {
+                ats: {
+                    value: 'Fair (68%)',
+                    label: 'ATS Compatibility:',
+                    status: 'low',
+                    icon: '⚠️'
+                },
+                keyword: {
+                    value: 'Low (42%)',
+                    label: 'Keyword Match:',
+                    status: 'low',
+                    icon: '❌'
+                },
+                actionVerbs: {
+                    value: 'Poor (8 unique verbs)',
+                    label: 'Action Verbs:',
+                    status: 'low',
+                    icon: '❌'
+                },
+            },
+            strengths: [
+                "Contact Information Clear: All essential personal details are easy to locate.",
+                "Relevant Keywords Found: Basic administrative terms like 'Scheduling' and 'Record Keeping' are present.",
+                "Chronological Layout: The experience section is listed clearly by date."
+            ],
+            improvements: [
+                "Weak Language: Repeated use of verbs like 'responsible for' or 'duties included.' Replace with strong action verbs.",
+                "Formatting Errors: Custom fonts and multi-column layout are confusing the ATS reader.",
+                "Lack of Achievement: All bullet points describe tasks, none describe results or impact on the organization."
+            ],
+            keywords: [
+                { keyword: 'Microsoft Suite Expert', status: 'Partial (Word/Excel only)', recommendation: 'Specify high proficiency in Outlook and PowerPoint.', className: 'text-warning' },
+                { keyword: 'Budget Management', status: 'Missing', recommendation: 'Include if you handled any expense reports, purchasing, or budget tracking.', className: 'text-danger' },
+                { keyword: 'CRM Software', status: 'Missing', recommendation: 'Mention specific CRM tools (e.g., Salesforce, Zoho) used.', className: 'text-danger' }
+            ],
+            tips: [
+                "Quantify Everything: Replace vague descriptions (e.g., 'managed projects') with metrics (e.g., 'managed 5 projects, delivered 95% on time').",
+                "Use Action Verbs: Start every bullet point in your experience section with a strong action verb (e.g., *Architected*, *Spearheaded*, *Optimized*).",
+                "Mirror the JD: Use exact phrasing for skills and experience mentioned in the target job description to maximize keyword matching.",
+                "Optimize Skills Section: Clearly categorize technical skills (languages, frameworks) separate from soft skills to aid parsing."
+            ]
         }
     };
 
@@ -284,7 +333,7 @@
         }
     };
 
-    // 3. Main function to populate the DOM
+    // 3. Main function to populate the DOM (remains the same as before)
     const populateResults = (scenarioKey) => {
         const data = scenarios[scenarioKey];
 
@@ -348,12 +397,19 @@
         });
     };
 
-    // 4. Initialization: Choose which scenario to display on load
-    // You can change 'seniorSoftwareEngineer' to 'marketingCoordinator' to see the other scenario!
-    // In a real app, this key would come from an API or local storage.
-    const selectedScenario = 'seniorSoftwareEngineer'; 
-    populateResults(selectedScenario);
+    // 4. Initialization: Randomly choose a scenario to display on load
+    
+    // Get all scenario keys
+    const scenarioKeys = Object.keys(scenarios);
 
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * scenarioKeys.length);
+
+    // Select the scenario key randomly
+    const selectedScenario = scenarioKeys[randomIndex];
+
+    // Populate the page with the randomly selected scenario
+    populateResults(selectedScenario);
 </script>
 </body>
 </html>
