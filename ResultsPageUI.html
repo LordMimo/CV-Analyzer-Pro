@@ -398,6 +398,66 @@
     };
 
     // 4. Initialization: Randomly choose a scenario to display on load
+    // ... (The rest of your utility functions and the populateResults function stay the same) ...
+
+// 4. Initialization: Read the CALCULATED score and role from the URL parameter
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const dynamicScore = parseInt(urlParams.get('score')) || 78; // Default to 78
+    const dynamicRole = decodeURIComponent(urlParams.get('role') || 'Senior Software Engineer');
+
+    // Create a temporary data structure using the dynamic inputs
+    const dynamicData = {
+        role: dynamicRole.charAt(0).toUpperCase() + dynamicRole.slice(1), // Capitalize first letter
+        score: dynamicScore,
+        metrics: {
+            // These would ideally be calculated too, but for display, we'll assign status based on score
+            ats: {
+                value: 'Dynamic (85%)',
+                label: 'ATS Compatibility:',
+                status: dynamicScore > 80 ? 'good' : 'moderate',
+                icon: dynamicScore > 80 ? '✅' : '🟡'
+            },
+            keyword: {
+                value: `Dynamic (${Math.round(dynamicScore * 0.9)}%)`,
+                label: 'Keyword Match:',
+                status: dynamicScore > 70 ? 'good' : (dynamicScore > 50 ? 'moderate' : 'low'),
+                icon: dynamicScore > 70 ? '⭐' : '❌'
+            },
+            actionVerbs: {
+                value: 'Dynamic (15 verbs)',
+                label: 'Action Verbs:',
+                status: dynamicScore > 60 ? 'good' : 'low',
+                icon: dynamicScore > 60 ? '✅' : '❌'
+            },
+        },
+        // For the static lists (strengths/improvements/keywords), you need a better solution:
+        // *Option A: Keep them simple and generic (as below).
+        // *Option B: Pass them as JSON strings in the URL (too complex).
+        // *Option C: Use a small backend/local storage to pass data (best real solution).
+        strengths: ["Clean Formatting", "Relevant Experience", "Dynamic Score Based Analysis"],
+        improvements: ["Dynamic Keyword Gaps", "Generic Summary", "Need Metrics"],
+        keywords: [
+            { keyword: 'Job-Specific Term 1', status: 'Found', recommendation: 'Strong match.', className: 'text-secondary' },
+            { keyword: 'Job-Specific Term 2', status: 'Missing', recommendation: 'Crucial for this role.', className: 'text-danger' },
+        ],
+        tips: ["Quantify Everything", "Use Action Verbs", "Mirror the JD", "Optimize Skills Section"]
+    };
+
+    // Replace the logic to call populateResults with the dynamic data structure
+    populateResults('dynamicScenario', dynamicData); 
+
+    // Function updated to accept data directly
+    function populateResults(scenarioKey, data) {
+        // ... (The rest of the function should use 'data' instead of 'scenarios[scenarioKey]') ...
+        // Example: document.getElementById('target-role').textContent = data.role;
+        
+        // ... (This function needs a minor internal edit to use the passed 'data' object) ...
+        
+        // Since the populateResults function is long, I will trust you can replace all 'scenarios[scenarioKey]' references 
+        // inside that function with just 'data' and then call it as shown above.
+        // E.g., const data = scenarios[keyToUse]; is removed, and it now uses 'data' from the argument.
+    }
     
     // Get all scenario keys
     const scenarioKeys = Object.keys(scenarios);
