@@ -403,7 +403,7 @@
 // 4. Initialization: Read the CALCULATED score and role from the URL parameter
 
     const urlParams = new URLSearchParams(window.location.search);
-    const dynamicScore = parseInt(urlParams.get('score')) || 78; // Default to 78
+    const dynamicScore = parseInt(urlParams.get('score')); // Default to 78
     const dynamicRole = decodeURIComponent(urlParams.get('role') || 'Senior Software Engineer');
 
     // Create a temporary data structure using the dynamic inputs
