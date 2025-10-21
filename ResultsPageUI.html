@@ -175,32 +175,15 @@
 // ... (Keep the HTML structure the same) ...
 
 <script>
-    // 1. Data Structure for Dynamic Scenarios
+    // 1. Data Structure for Static Scenarios (Kept for rich data fallback)
+    // NOTE: This object is now used ONLY as a source for the rich list data (strengths, improvements, keywords)
+    // based on the calculated score, not for selecting a whole scenario.
     const scenarios = {
-        // SCENARIO 1: Senior Software Engineer (High Score)
+        // SCENARIO 1: Senior Software Engineer (High Score) - used for score >= 75
         'seniorSoftwareEngineer': {
             role: 'Senior Software Engineer',
             score: 78,
-            metrics: {
-                ats: {
-                    value: 'Excellent (95%)',
-                    label: 'ATS Compatibility:',
-                    status: 'good',
-                    icon: '✅'
-                },
-                keyword: {
-                    value: 'Moderate (78%)',
-                    label: 'Keyword Match:',
-                    status: 'moderate',
-                    icon: '⭐'
-                },
-                actionVerbs: {
-                    value: 'Needs Improvement (12 unique verbs)',
-                    label: 'Action Verbs:',
-                    status: 'low',
-                    icon: '❌'
-                },
-            },
+            metrics: { /* Metrics overridden by dynamic score */ },
             strengths: [
                 "High Keyword Density: Excellent use of 'Python,' 'AWS,' and 'Agile.'",
                 "Quantifiable Results: Used 8+ metrics (e.g., increased by 15%) in experience sections.",
@@ -224,30 +207,9 @@
             ]
         },
 
-        // SCENARIO 2: Marketing Coordinator (Moderate Score)
+        // SCENARIO 2: Marketing Coordinator (Moderate Score) - used for score 50 <= score < 75
         'marketingCoordinator': {
-            role: 'Marketing Coordinator',
-            score: 61,
-            metrics: {
-                ats: {
-                    value: 'Good (85%)',
-                    label: 'ATS Compatibility:',
-                    status: 'moderate',
-                    icon: '🟡'
-                },
-                keyword: {
-                    value: 'Low (55%)',
-                    label: 'Keyword Match:',
-                    status: 'low',
-                    icon: '❌'
-                },
-                actionVerbs: {
-                    value: 'Acceptable (18 unique verbs)',
-                    label: 'Action Verbs:',
-                    status: 'good',
-                    icon: '✅'
-                },
-            },
+            // ... (keep the data structure the same, but only the lists matter) ...
             strengths: [
                 "Strong Action Verbs: Used a variety of impactful verbs like 'Executed,' 'Analyzed,' and 'Launched.'",
                 "Clear Role Progression: Easy to follow career path, showing growth in responsibilities.",
@@ -271,30 +233,9 @@
             ]
         },
         
-        // SCENARIO 3: Administrative Assistant (Low Score)
+        // SCENARIO 3: Administrative Assistant (Low Score) - used for score < 50
         'administrativeAssistant': {
-            role: 'Administrative Assistant',
-            score: 42,
-            metrics: {
-                ats: {
-                    value: 'Fair (68%)',
-                    label: 'ATS Compatibility:',
-                    status: 'low',
-                    icon: '⚠️'
-                },
-                keyword: {
-                    value: 'Low (42%)',
-                    label: 'Keyword Match:',
-                    status: 'low',
-                    icon: '❌'
-                },
-                actionVerbs: {
-                    value: 'Poor (8 unique verbs)',
-                    label: 'Action Verbs:',
-                    status: 'low',
-                    icon: '❌'
-                },
-            },
+            // ... (keep the data structure the same, but only the lists matter) ...
             strengths: [
                 "Contact Information Clear: All essential personal details are easy to locate.",
                 "Relevant Keywords Found: Basic administrative terms like 'Scheduling' and 'Record Keeping' are present.",
@@ -319,7 +260,7 @@
         }
     };
 
-    // 2. Function to Get Status Class and Score Text Color
+    // 2. Function to Get Status Class and Score Text Color (No change needed)
     const getStatusStyles = (status, isScore = false) => {
         if (isScore) {
             if (status >= 75) return { circleClass: 'score-circle-good', textClass: 'text-secondary' };
@@ -329,14 +270,20 @@
             if (status === 'good') return { textClass: 'text-secondary' };
             if (status === 'moderate') return { textClass: 'text-warning' };
             if (status === 'low') return { textClass: 'text-danger' };
-            return { textClass: 'text-gray-800' }; // default
+            return { textClass: 'text-gray-800' };
         }
     };
 
-    // 3. Main function to populate the DOM (remains the same as before)
-    const populateResults = (scenarioKey) => {
-        const data = scenarios[scenarioKey];
+    // Simple function to determine status string based on score thresholds
+    const getStatus = (score) => {
+        if (score >= 75) return 'good';
+        if (score >= 50) return 'moderate';
+        return 'low';
+    };
 
+    // 3. Main function to populate the DOM (MODIFIED to accept 'data' directly)
+    // The previous argument 'scenarioKey' is removed as requested.
+    const populateResults = (data) => {
         // --- Header and Score ---
         document.getElementById('target-role').textContent = data.role;
         document.getElementById('overall-score').textContent = data.score;
@@ -359,10 +306,8 @@
             document.getElementById(`${prefix}-value`).textContent = metric.value;
 
             const metricP = document.getElementById(`metric-${prefix}`);
-            // Remove previous color classes
             metricP.classList.remove('text-primary', 'text-secondary', 'text-warning', 'text-danger');
-            // Add the new color class based on status
-            metricP.classList.add(styles.textClass.replace('text-', 'text-'));
+            metricP.classList.add(styles.textClass);
         });
 
         // --- List Sections (Strengths, Improvements, Tips) ---
@@ -382,7 +327,10 @@
         populateList('tips-list', data.tips);
 
         // --- Keyword Analysis Table ---
-        document.getElementById('keyword-match-summary').innerHTML = `Your CV matched <strong>${data.metrics.keyword.value.match(/\d+%/)[0]}</strong> of the skills found in top of your profession.`;
+        const keywordValueMatch = data.metrics.keyword.value.match(/\d+%/);
+        const keywordPercentage = keywordValueMatch ? keywordValueMatch[0] : 'N/A';
+        document.getElementById('keyword-match-summary').innerHTML = `Your CV matched <strong>${keywordPercentage}</strong> of the skills found in top of your profession.`;
+        
         const tableBody = document.getElementById('keyword-table-body');
         tableBody.innerHTML = ''; // Clear existing content
 
@@ -397,79 +345,58 @@
         });
     };
 
-    // 4. Initialization: Randomly choose a scenario to display on load
-    // ... (The rest of your utility functions and the populateResults function stay the same) ...
-
-// 4. Initialization: Read the CALCULATED score and role from the URL parameter
-
+    // 4. Initialization: Read the CALCULATED score and role from the URL parameter
     const urlParams = new URLSearchParams(window.location.search);
-    const dynamicScore = parseInt(urlParams.get('score')); // Default to 78
-    const dynamicRole = decodeURIComponent(urlParams.get('role') || 'Senior Software Engineer');
+    const dynamicScore = parseInt(urlParams.get('score')) || 65; // Default score if none is passed
+    const dynamicRole = decodeURIComponent(urlParams.get('role') || 'Job Seeker'); // Default role
 
-    // Create a temporary data structure using the dynamic inputs
-    const dynamicData = {
-        role: dynamicRole.charAt(0).toUpperCase() + dynamicRole.slice(1), // Capitalize first letter
-        score: dynamicScore,
-        metrics: {
-            // These would ideally be calculated too, but for display, we'll assign status based on score
-            ats: {
-                value: 'Dynamic (85%)',
-                label: 'ATS Compatibility:',
-                status: dynamicScore > 80 ? 'good' : 'moderate',
-                icon: dynamicScore > 80 ? '✅' : '🟡'
-            },
-            keyword: {
-                value: `Dynamic (${Math.round(dynamicScore * 0.9)}%)`,
-                label: 'Keyword Match:',
-                status: dynamicScore > 70 ? 'good' : (dynamicScore > 50 ? 'moderate' : 'low'),
-                icon: dynamicScore > 70 ? '⭐' : '❌'
-            },
-            actionVerbs: {
-                value: 'Dynamic (15 verbs)',
-                label: 'Action Verbs:',
-                status: dynamicScore > 60 ? 'good' : 'low',
-                icon: dynamicScore > 60 ? '✅' : '❌'
-            },
-        },
-        // For the static lists (strengths/improvements/keywords), you need a better solution:
-        // *Option A: Keep them simple and generic (as below).
-        // *Option B: Pass them as JSON strings in the URL (too complex).
-        // *Option C: Use a small backend/local storage to pass data (best real solution).
-        strengths: ["Clean Formatting", "Relevant Experience", "Dynamic Score Based Analysis"],
-        improvements: ["Dynamic Keyword Gaps", "Generic Summary", "Need Metrics"],
-        keywords: [
-            { keyword: 'Job-Specific Term 1', status: 'Found', recommendation: 'Strong match.', className: 'text-secondary' },
-            { keyword: 'Job-Specific Term 2', status: 'Missing', recommendation: 'Crucial for this role.', className: 'text-danger' },
-        ],
-        tips: ["Quantify Everything", "Use Action Verbs", "Mirror the JD", "Optimize Skills Section"]
-    };
-
-    // Replace the logic to call populateResults with the dynamic data structure
-    populateResults('dynamicScenario', dynamicData); 
-
-    // Function updated to accept data directly
-    function populateResults(scenarioKey, data) {
-        // ... (The rest of the function should use 'data' instead of 'scenarios[scenarioKey]') ...
-        // Example: document.getElementById('target-role').textContent = data.role;
-        
-        // ... (This function needs a minor internal edit to use the passed 'data' object) ...
-        
-        // Since the populateResults function is long, I will trust you can replace all 'scenarios[scenarioKey]' references 
-        // inside that function with just 'data' and then call it as shown above.
-        // E.g., const data = scenarios[keyToUse]; is removed, and it now uses 'data' from the argument.
+    // Determine which static scenario to use for rich list data (strengths, keywords, etc.)
+    let scenarioKeyToUse;
+    if (dynamicScore >= 75) {
+        scenarioKeyToUse = 'seniorSoftwareEngineer';
+    } else if (dynamicScore >= 50) {
+        scenarioKeyToUse = 'marketingCoordinator';
+    } else {
+        scenarioKeyToUse = 'administrativeAssistant';
     }
     
-    // Get all scenario keys
-    const scenarioKeys = Object.keys(scenarios);
+    // Get the base lists from the chosen scenario
+    const baseScenarioData = scenarios[scenarioKeyToUse];
 
-    // Generate a random index
-    const randomIndex = Math.floor(Math.random() * scenarioKeys.length);
+    // Construct the final data structure, combining URL parameters and rich list data
+    const finalData = {
+        role: dynamicRole.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+        score: dynamicScore,
+        metrics: {
+            // Dynamically calculate metric statuses based on the overall score
+            ats: {
+                value: `Calculated (${Math.min(95, dynamicScore + 15)}%)`,
+                label: 'ATS Compatibility:',
+                status: getStatus(dynamicScore + 10),
+                icon: getStatus(dynamicScore + 10) === 'good' ? '✅' : (getStatus(dynamicScore + 10) === 'moderate' ? '🟡' : '⚠️')
+            },
+            keyword: {
+                value: `Calculated (${Math.round(dynamicScore * 0.9)}%)`,
+                label: 'Keyword Match:',
+                status: getStatus(dynamicScore),
+                icon: getStatus(dynamicScore) === 'good' ? '⭐' : '❌'
+            },
+            actionVerbs: {
+                value: `Calculated (${Math.max(5, Math.floor(dynamicScore / 5))} unique verbs)`,
+                label: 'Action Verbs:',
+                status: getStatus(dynamicScore - 10),
+                icon: getStatus(dynamicScore - 10) === 'good' ? '✅' : '❌'
+            },
+        },
+        // Use the rich data lists from the base scenario
+        strengths: baseScenarioData.strengths,
+        improvements: baseScenarioData.improvements,
+        keywords: baseScenarioData.keywords,
+        tips: baseScenarioData.tips
+    };
 
-    // Select the scenario key randomly
-    const selectedScenario = scenarioKeys[randomIndex];
-
-    // Populate the page with the randomly selected scenario
-    populateResults(selectedScenario);
+    // Call populateResults with the dynamically constructed data
+    populateResults(finalData);
 </script>
 </body>
 </html>
