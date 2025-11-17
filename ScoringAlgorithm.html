@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CV Scoring System</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+    input[type="text"] { width: 100%; padding: 8px; margin-top: 5px; margin-bottom: 10px; box-sizing: border-box; }
+    textarea { width: 100%; height: 200px; margin-top: 10px; }
+    button { margin-top: 10px; padding: 10px 20px; cursor: pointer; }
+    .result { margin-top: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 0 5px #ccc; }
+    .score { font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>CV Scoring System</h2>
+    <p>Enter Target Job Title (e.g., Senior Software Engineer):</p>
+    <input type="text" id="jobTitle" placeholder="e.g., Software Engineer">
+  <p>Paste your CV text below:</p>
+  <textarea id="cvText"></textarea><br>
+  <button onclick="analyzeCV()">Analyze CV</button>
+
+  <div id="result" class="result" style="display:none;">
+    <p class="score"></p>
+    <p class="recommendations"></p>
+  </div>
+
+  <script>
+    function analyzeCV() {
+        // 1. Get Inputs and Normalize Text
+        const text = document.getElementById("cvText").value;
+        const userJobTitle = document.getElementById("jobTitle").value; 
+        const jobTitleLower = userJobTitle.toLowerCase(); 
+        const lowerText = text.toLowerCase();
+        
+        if (!lowerText.trim() || !userJobTitle.trim()) {
+            alert("Please paste your CV text and enter a target job title first!");
+            return;
+        }
+
+        let calculatedScore = 0;
+        const wordCount = lowerText.split(/\s+/).filter(word => word.length > 0).length;
+
+        // --- Job-Specific Keywords Mapping ---
+        const jobKeywords = {
+            'software engineer': ["python", "java", "sql", "aws", "docker", "agile", "microservices", "ci/cd", "rest api"],
+            'marketing coordinator': ["seo", "sem", "hubspot", "analytics", "content strategy", "social media", "campaign", "a/b testing"],
+            'administrative assistant': ["scheduling", "microsoft suite", "outlook", "excel", "record keeping", "budget management", "travel arrangement"],
+        };
+
+        let targetKeywords = jobKeywords[Object.keys(jobKeywords).find(key => jobTitleLower.includes(key))] || jobKeywords['software engineer'];
+
+        // --- 2. Scoring Components & Data Collection ---
+        let recommendations = [];
+        let totalKeywordCount = targetKeywords.length; 
+
+        // 2.1 SECTION STRUCTURE & LENGTH (Max 15 points)
+        let structurePoints = 0;
+        const requiredSections = ["education", "experience", "skills", "contact"];
+        requiredSections.forEach(section => {
+            if (lowerText.includes(section)) structurePoints += 3;
+        });
+        if (wordCount >= 250 && wordCount <= 700) {
+            structurePoints += 3;
+        } else if (wordCount > 700) {
+            recommendations.push("❌ **Conciseness:** Your CV might be too long. Aim for 1-2 pages of highly relevant content.");
+        } else {
+            recommendations.push("⚠️ **Detail:** Your CV seems too short. Add more detailed, results-oriented bullet points.");
+        }
+        calculatedScore += Math.min(15, structurePoints);
+
+        // ATS Score Approximation (Structure + Length)
+        let atsScore = Math.min(95, 60 + structurePoints * 2);
+
+        // 2.2 QUANTIFIABILITY (Max 30 points)
+        const quantifiablePattern = /(\d+[\+\-]?%?|increased|reduced|saved|managed|improved|built)\s+\d+/gi;
+        const metricsFound = (text.match(quantifiablePattern) || []).length;
+        let quantifiabilityPoints = Math.min(30, metricsFound * 5);
+        calculatedScore += quantifiabilityPoints;
+        if (metricsFound < 4) {
+            recommendations.push(`⚠️ **Quantify Results:** Found only ${metricsFound} metrics. Replace "responsible for" tasks with numerical achievements (e.g., increased efficiency by 15%).`);
+        }
+        
+        // Add a strength based on quantifiability
+        if (metricsFound >= 8) {
+             recommendations.push("✅ **Quantifiable Results:** Excellent use of 8+ metrics (e.g., percentages, counts) in experience sections.");
+        }
+
+
+        // 2.3 IMPACTFUL LANGUAGE (Action Verbs) (Max 25 points)
+        const strongActionVerbs = ["architected", "developed", "spearheaded", "optimized", "implemented", "managed", "designed", "resolved", "launched", "automated", "created"];
+        let verbCount = 0;
+        strongActionVerbs.forEach(verb => {
+            const verbPattern = new RegExp('\\.\\s*' + verb + '|\\*\\s*' + verb, 'gi');
+            verbCount += (lowerText.match(verbPattern) || []).length;
+        });
+        let verbPoints = Math.min(25, verbCount * 4);
+        calculatedScore += verbPoints;
+        if (verbCount < 5) {
+            recommendations.push(`❌ **Action Verbs:** Use strong action verbs to start your bullet points. Found only ${verbCount} impactful verbs.`);
+        } else if (verbCount >= 10) {
+             recommendations.push("✅ **Strong Action Verbs:** Used a variety of impactful verbs like 'Architected,' 'Optimized,' and 'Launched.'");
+        }
+
+
+        // 2.4 KEYWORD DENSITY (Job-Specific) (Max 30 points)
+        let keywordPoints = 0;
+        let matchedKeywords = [];
+        let missingKeywords = [];
+
+        targetKeywords.forEach(word => {
+            const count = (lowerText.match(new RegExp(word, 'g')) || []).length;
+            if (count > 0) {
+                keywordPoints += 30 / targetKeywords.length; 
+                matchedKeywords.push({ keyword: word, count: count });
+            } else {
+                missingKeywords.push(word);
+            }
+        });
+
+        calculatedScore += Math.min(30, keywordPoints);
+        let keywordMatchPercentage = Math.round((matchedKeywords.length / targetKeywords.length) * 100);
+
+        if (missingKeywords.length > 0) {
+            recommendations.push(`⚠️ **Keyword Match:** Missing crucial keywords for this role: ${missingKeywords.slice(0, 4).join(', ')}. Include them in your experience section.`);
+        } else if (keywordMatchPercentage > 80) {
+             recommendations.push("✅ **High Keyword Density:** Excellent match for all crucial target keywords.");
+        }
+
+
+        // --- 3. Final Data Packaging and Redirection ---
+
+        calculatedScore = Math.min(100, Math.round(calculatedScore));
+
+        // **Package ALL dynamic data to send to Results Page**
+        const resultsData = {
+            score: calculatedScore,
+            role: userJobTitle,
+            atsScore: atsScore,
+            keywordMatch: keywordMatchPercentage,
+            actionVerbCount: verbCount,
+            missingKeywords: missingKeywords,
+            allKeywords: targetKeywords,
+            generalRecommendations: recommendations 
+        };
+
+        const dataString = encodeURIComponent(JSON.stringify(resultsData));
+        
+        // **Redirect to the Results page with the comprehensive JSON data**
+        window.location.href = `ResultsPageUI.html?data=${dataString}`;
+    }
+</script>
+</body>
+</html>

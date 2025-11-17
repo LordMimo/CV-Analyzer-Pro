@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your CV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Added libraries for text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <style>
+        /* Shared styling from index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            min-height: 100vh;
+        }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1e40af', 
+                        'secondary': '#10b981',
+                    }
+                }
+            }
+        }
+        .content-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px); 
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="bg-white shadow-md w-full p-4 flex justify-center sticky top-0 z-10">
+        <div class="flex space-x-8 text-lg font-medium">
+            <a href="index.html" class="text-gray-600 hover:text-secondary transition duration-150">Home</a>
+            <a href="CVUploadPage.html" class="text-primary hover:text-secondary transition duration-150 font-bold">Upload CV</a>
+            <a href="ResultsPageUI.html" class="text-gray-600 hover:text-secondary transition duration-150">View Results</a>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <main class="w-full max-w-2xl bg-white shadow-xl rounded-3xl p-8 md:p-12 text-center">
+
+            <header class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-primary mb-2">
+                    CV Analysis
+                </h1>
+                <p class="text-gray-600">
+                    We accept PDF and DOCX formats. Your CV is analyzed instantly.
+                </p>
+            </header>
+
+            <form id="cvUploadForm" onsubmit="handleUpload(event)" class="space-y-6">
+
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 cursor-pointer hover:border-secondary transition duration-200">
+                    <input type="file" id="cvFile" name="cvFile" accept=".pdf,.docx" required class="hidden">
+                    <label for="cvFile" class="flex flex-col items-center justify-center space-y-3">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v1h-1M6 16h12a2 2 0 002-2v-3a2 2 0 00-2-2H6a2 2 0 00-2 2v3a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-gray-600 font-medium" id="uploadLabel">
+                            Drag and drop your CV here, or click to browse.
+                        </p>
+                        <p class="text-sm text-gray-400">
+                            (PDF or DOCX only, Max 5MB)
+                        </p>
+                    </label>
+                </div>
+                
+                <select id="jobTitleSelect" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition duration-150">
+                    <option value="" disabled selected>Select your Target Job Title</option>
+                    </select>
+
+                <button type="submit" id="analyzeButton"
+                    class="w-full inline-flex items-center justify-center px-8 py-4 bg-secondary **text-black** font-semibold text-xl rounded-lg shadow-lg hover:bg-secondary/90 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-secondary/50">
+                    Analyze CV & See Score Instantly
+                </button>
+            </form>
+            
+            <p id="feedbackMessage" class="mt-4 text-lg text-secondary font-bold hidden">
+                CV Uploaded! Analyzing now...
+            </p>
+
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+<script>
+    // Expanded job titles
+const mockJobTitles = [
+    "Senior Software Engineer",
+    "Data Scientist (ML Focus)",
+    "Marketing Manager",
+    "Product Manager",
+    "UX/UI Designer",
+    "DevOps Engineer",
+    "Business Analyst",
+    "Sales Representative",
+    "HR Specialist",
+    "Project Manager"
+];
+
+function populateJobTitles() {
+    const selectElement = document.getElementById('jobTitleSelect');
+    if (!selectElement) {
+        console.error('Job title select element not found!');
+        return;
+    }
+    // Clear existing options
+    selectElement.innerHTML = '<option value="">Select a Job Title</option>';
+    mockJobTitles.forEach(title => {
+        const option = document.createElement('option');
+        option.value = title;
+        option.textContent = title;
+        selectElement.appendChild(option);
+    });
+    console.log('Job titles populated:', mockJobTitles.length);
+}
+
+document.addEventListener('DOMContentLoaded', populateJobTitles);
+
+// File upload label update
+document.getElementById('cvFile').addEventListener('change', function(e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : 'Drag and drop your CV here, or click to browse.';
+    document.getElementById('uploadLabel').textContent = fileName;
+});
+
+// 1. File Reader and Text Extractor Module
+async function extractTextFromFile(file) {
+    const fileType = file.type;
+    let text = '';
+    if (fileType === 'application/pdf') {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            text += textContent.items.map(item => item.str).join(' ') + ' ';
+        }
+    } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        text = result.value;
+    } else {
+        throw new Error('Unsupported file type. Please upload a PDF or DOCX.');
+    }
+    text = text.replace(/[^\x20-\x7E\n\r\t]/g, '').replace(/\s+/g, ' ').trim();
+    if (text.length > 50000) text = text.substring(0, 50000);
+    return text;
+}
+
+// 2. Keyword Analysis Script Module
+function analyzeKeywords(text, jobTitle) {
+    const jobTitleLower = jobTitle.toLowerCase();
+    const lowerText = text.toLowerCase();
+    const jobKeywords = {
+        'senior software engineer': ["python", "java", "sql", "aws"],
+        'data scientist (ml focus)': ["python", "machine learning", "tensorflow", "data analysis"],
+        'marketing manager': ["seo", "sem", "hubspot", "campaign management"],
+        'product manager': ["roadmap", "stakeholder", "agile", "user stories"],
+        'ux/ui designer': ["figma", "prototyping", "user research", "wireframes"],
+        'devops engineer': ["docker", "kubernetes", "ci/cd", "aws"],
+        'business analyst': ["requirements", "sql", "excel", "process improvement"],
+        'sales representative': ["crm", "lead generation", "negotiation", "pipeline"],
+        'hr specialist': ["recruitment", "employee relations", "compliance", "training"],
+        'project manager': ["agile", "scrum", "risk management", "budgeting"]
+    };
+    let targetKeywords = jobKeywords[jobTitleLower] || jobKeywords['senior software engineer'];
+    let keywordPoints = 0;
+    let missingKeywords = [];
+    targetKeywords.forEach(word => {
+        if (lowerText.includes(word)) keywordPoints += 10;
+        else missingKeywords.push(word);
+    });
+    let keywordMatch = Math.round((targetKeywords.length - missingKeywords.length) / targetKeywords.length * 100);
+    return {
+        keywordPoints: keywordPoints,
+        keywordMatch: keywordMatch,
+        missingKeywords: missingKeywords,
+        allKeywords: targetKeywords
+    };
+}
+
+// 3. Scoring Algorithm Module (Job-Specific)
+function calculateScore(text, jobTitle, keywordAnalysis) {
+    const lowerText = text.toLowerCase();
+    if (!lowerText.trim()) throw new Error("No text to analyze");
+
+    // Job-specific weights
+    const jobWeights = {
+        'senior software engineer': { keywordMultiplier: 1.5, verbMultiplier: 1.2, metricMultiplier: 1.0 },
+        'data scientist (ml focus)': { keywordMultiplier: 1.4, verbMultiplier: 1.0, metricMultiplier: 1.3 },
+        'marketing manager': { keywordMultiplier: 1.0, verbMultiplier: 1.1, metricMultiplier: 1.5 },
+        'product manager': { keywordMultiplier: 1.2, verbMultiplier: 1.3, metricMultiplier: 1.2 },
+        'ux/ui designer': { keywordMultiplier: 1.1, verbMultiplier: 1.0, metricMultiplier: 1.4 },
+        'devops engineer': { keywordMultiplier: 1.6, verbMultiplier: 1.1, metricMultiplier: 1.0 },
+        'business analyst': { keywordMultiplier: 1.3, verbMultiplier: 1.0, metricMultiplier: 1.4 },
+        'sales representative': { keywordMultiplier: 1.0, verbMultiplier: 1.2, metricMultiplier: 1.6 },
+        'hr specialist': { keywordMultiplier: 1.1, verbMultiplier: 1.1, metricMultiplier: 1.3 },
+        'project manager': { keywordMultiplier: 1.2, verbMultiplier: 1.4, metricMultiplier: 1.1 }
+    };
+    const weights = jobWeights[jobTitle.toLowerCase()] || { keywordMultiplier: 1.0, verbMultiplier: 1.0, metricMultiplier: 1.0 };
+
+    let calculatedScore = 0;
+    const wordCount = lowerText.split(/\s+/).length;
+
+    // Structure points
+    let structurePoints = lowerText.includes("education") ? 5 : 0;
+    structurePoints += lowerText.includes("experience") ? 5 : 0;
+    calculatedScore += structurePoints;
+    let atsScore = 60 + structurePoints;
+
+    // Metrics (weighted)
+    const metricsFound = (text.match(/\d+%?/g) || []).length;
+    calculatedScore += Math.min(30, metricsFound * 5) * weights.metricMultiplier;
+
+    // Action verbs (weighted)
+    const verbs = ["developed", "managed", "created"];
+    let verbCount = verbs.reduce((count, verb) => count + (lowerText.split(verb).length - 1), 0);
+    calculatedScore += Math.min(25, verbCount * 4) * weights.verbMultiplier;
+
+    // Keyword points (weighted)
+    calculatedScore += keywordAnalysis.keywordPoints * weights.keywordMultiplier;
+
+    calculatedScore = Math.min(100, calculatedScore);
+
+    // Recommendations
+    let recommendations = [];
+    if (metricsFound < 2) recommendations.push('⚠️ Add quantifiable results.');
+    if (verbCount < 3) recommendations.push('❌ Use more action verbs.');
+    if (keywordAnalysis.missingKeywords.length > 0) recommendations.push('🔍 Include more job-specific keywords.');
+
+    return {
+        score: Math.round(calculatedScore),
+        role: jobTitle,
+        atsScore: Math.round(atsScore),
+        keywordMatch: keywordAnalysis.keywordMatch,
+        actionVerbCount: verbCount,
+        missingKeywords: keywordAnalysis.missingKeywords,
+        allKeywords: keywordAnalysis.allKeywords,
+        generalRecommendations: recommendations
+    };
+}
+
+// 4. Handle Upload (Orchestrates the modules)
+async function handleUpload(event) {
+    event.preventDefault();
+
+    const fileInput = document.getElementById('cvFile');
+    const jobTitle = document.getElementById('jobTitleSelect').value;
+
+    if (fileInput.files.length === 0) {
+        alert("Please select a CV file.");
+        return;
+    }
+    if (!jobTitle) {
+        alert("Please select a job title.");
+        return;
+    }
+
+    try {
+        const file = fileInput.files[0];
+        console.log('Starting extraction for file:', file.name);
+
+        // Step 1: Extract text
+        const extractedText = await extractTextFromFile(file);
+        if (!extractedText.trim()) throw new Error('No text extracted from the file.');
+        console.log('Text extracted successfully, length:', extractedText.length);
+
+        // Step 2: Analyze keywords
+        const keywordAnalysis = analyzeKeywords(extractedText, jobTitle);
+        console.log('Keyword analysis:', keywordAnalysis);
+
+        // Step 3: Calculate score
+        const resultsData = calculateScore(extractedText, jobTitle, keywordAnalysis);
+        console.log('Scoring complete:', resultsData);
+
+        // Step 4: Store and redirect
+        localStorage.setItem('cvAnalysisData', JSON.stringify(resultsData));
+        console.log('Data stored in localStorage. Redirecting...');
+        window.location.href = 'ResultsPageUI.html';
+    } catch (error) {
+        console.error('Error during upload/analysis:', error);
+        alert("Error: " + error.message + ". Please try again.");
+    }
+}
+
+// Attach upload handler to the button (assuming your HTML has a button with id="uploadBtn")
+document.getElementById('uploadBtn').addEventListener('click', handleUpload);
+
+</script>
+</body>
+</html>

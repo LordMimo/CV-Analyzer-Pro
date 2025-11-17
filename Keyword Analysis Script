@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Keyword Analyzer</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use Inter font and simple theming -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4F46E5', // Indigo-600
+                        'secondary': '#6EE7B7', // Emerald-300
+                        'danger': '#F87171', // Red-400
+                        'neutral-light': '#F9FAFB', // Gray-50
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Apply custom scrollbar for the textarea and main body */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        .scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1; /* Slate-300 */
+            border-radius: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background-color: #f1f5f9; /* Slate-100 */
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <div id="app" class="max-w-6xl mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-10">
+
+        <!-- Header -->
+        <header class="mb-8 border-b pb-4">
+            <h1 class="text-3xl font-extrabold text-primary flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0.75 0.75 22.5 22.5" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 mr-3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 12 7.125v-1.5A3.375 3.375 0 0 0 8.625 2.25H5.25A2.25 2.25 0 0 0 3 4.5v15a2.25 2.25 0 0 0 2.25 2.25h13.5A2.25 2.25 0 0 0 21 19.5V16.75M19.5 14.25h-2.625A3.375 3.375 0 0 1 13.5 10.875V19.5m6-5.25v2.625a3.375 3.375 0 0 1-3.375 3.375h-1.5A1.125 1.125 0 0 1 12 18.375v-1.5A3.375 3.375 0 0 0 8.625 13.5H5.25M12 16.5h3.375A3.375 3.375 0 0 0 18.75 13.125V8.625M19.5 14.25h-2.625A3.375 3.375 0 0 0 13.5 10.875V19.5" />
+                </svg>
+                CV Keyword Optimizer
+            </h1>
+            <p class="text-gray-500 mt-1">Paste your CV text below and analyze it against critical skills.</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- CV Input -->
+            <div>
+                <label for="cvText" class="block text-lg font-medium text-gray-700 mb-2">Paste CV Text Here</label>
+                <textarea id="cvText" rows="15" class="scroll-container w-full p-4 border border-gray-300 rounded-lg shadow-inner focus:ring-primary focus:border-primary transition duration-150" placeholder="Copy and paste the plain text of your resume or CV here..."></textarea>
+                
+                <button onclick="analyzeCV()" class="mt-4 w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-primary focus:ring-opacity-50">
+                    Analyze Keywords
+                </button>
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="bg-neutral-light p-6 rounded-xl shadow-inner border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Analysis Report</h2>
+                <div id="resultsContainer">
+                    <p class="text-gray-500">Click "Analyze Keywords" to see the frequency report and missing essential skills.</p>
+                </div>
+
+                <!-- Keyword List Section -->
+                <div class="mt-6 pt-4 border-t border-gray-300">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Target Keywords</h3>
+                    <p id="targetKeywordsList" class="text-sm text-gray-600 leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Define the target keywords. Categorizing them helps in the display/analysis logic.
+        // The weight (e.g., 200, 100) is just for illustrative sorting/importance.
+        const TARGET_KEYWORDS = [
+            // Technical Skills (Often mandatory for tech roles)
+            { word: 'JavaScript', category: 'Tech', weight: 300, isEssential: true },
+            { word: 'TypeScript', category: 'Tech', weight: 250, isEssential: true },
+            { word: 'React', category: 'Tech', weight: 250, isEssential: true },
+            { word: 'Python', category: 'Tech', weight: 200, isEssential: false },
+            { word: 'SQL', category: 'Tech', weight: 200, isEssential: true },
+            { word: 'Tailwind CSS', category: 'Tech', weight: 150, isEssential: false },
+            
+            // Soft Skills (Often mandatory for any professional role)
+            { word: 'Teamwork', category: 'Soft', weight: 300, isEssential: true },
+            { word: 'Communication', category: 'Soft', weight: 300, isEssential: true },
+            { word: 'Leadership', category: 'Soft', weight: 200, isEssential: true },
+            { word: 'Problem-solving', category: 'Soft', weight: 200, isEssential: true },
+            { word: 'Client-facing', category: 'Soft', weight: 150, isEssential: false },
+            { word: 'Agile', category: 'Soft', weight: 150, isEssential: true },
+        ];
+
+        // Global state for results
+        let keywordResults = [];
+
+        /**
+         * Cleans and tokenizes the input text for accurate counting.
+         * @param {string} text The raw text from the CV.
+         * @returns {string} The cleaned, lowercased text.
+         */
+        function cleanText(text) {
+            // Remove punctuation, normalize whitespace, and convert to lowercase
+            return text
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '') // Keep only letters, numbers, spaces, and hyphens
+                .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+                .trim();
+        }
+
+        /**
+         * Analyzes the CV text against the target keywords.
+         */
+        function analyzeCV() {
+            const cvTextEl = document.getElementById('cvText');
+            const rawText = cvTextEl.value;
+
+            if (rawText.trim().length === 0) {
+                renderError('Please paste your CV text into the box to begin the analysis.');
+                return;
+            }
+
+            const cleanedText = cleanText(rawText);
+            const counts = {};
+            
+            // 1. Calculate Frequencies
+            TARGET_KEYWORDS.forEach(kw => {
+                // Create a case-insensitive, global regex for the whole word/phrase
+                // Escaping special characters in the keyword
+                const escapedWord = kw.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                // Regex: Find the word boundary (\b) to ensure we match 'React' and not 'Reaction'
+                const regex = new RegExp('\\b' + escapedWord + '\\b', 'gi');
+                
+                // Get all matches
+                const matches = cleanedText.match(regex);
+                const count = matches ? matches.length : 0;
+                
+                counts[kw.word] = count;
+            });
+            
+            // Store results and render
+            keywordResults = TARGET_KEYWORDS.map(kw => ({
+                ...kw,
+                count: counts[kw.word]
+            }));
+            
+            renderResults();
+        }
+
+        /**
+         * Renders the analysis report to the DOM.
+         */
+        function renderResults() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = ''; // Clear previous results
+
+            if (keywordResults.length === 0) {
+                resultsContainer.innerHTML = '<p class="text-gray-500">Analysis complete. No results to show.</p>';
+                return;
+            }
+
+            // Sort results: Essential missing first, then Essential present, then non-essential
+            keywordResults.sort((a, b) => {
+                const aMissing = a.isEssential && a.count === 0 ? 1 : 0;
+                const bMissing = b.isEssential && b.count === 0 ? 1 : 0;
+                
+                // Prioritize essential missing keywords (1 vs 0)
+                if (aMissing !== bMissing) {
+                    return bMissing - aMissing;
+                }
+                
+                // After that, sort by presence/absence
+                const aPresent = a.count > 0 ? 1 : 0;
+                const bPresent = b.count > 0 ? 1 : 0;
+                if (aPresent !== bPresent) {
+                    return bPresent - aPresent;
+                }
+                
+                // Finally, sort by count descending
+                return b.count - a.count;
+            });
+
+
+            // --- Section 1: Missing Essentials Summary ---
+            const missingEssentials = keywordResults.filter(kw => kw.isEssential && kw.count === 0);
+            
+            if (missingEssentials.length > 0) {
+                const missingHtml = `
+                    <div class="mb-6 p-4 bg-danger text-white rounded-lg shadow-md border-2 border-red-600">
+                        <p class="font-bold text-xl mb-2">⚠️ Missing Critical Keywords (${missingEssentials.length})</p>
+                        <p class="text-sm">Your CV is missing the following essential skills that recruiters are likely searching for:</p>
+                        <ul class="list-disc list-inside mt-2 ml-4 font-mono text-base">
+                            ${missingEssentials.map(kw => `<li>${kw.word} (${kw.category})</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                resultsContainer.innerHTML += missingHtml;
+            } else {
+                 resultsContainer.innerHTML += `
+                    <div class="mb-6 p-4 bg-secondary text-gray-800 rounded-lg shadow-md border-2 border-emerald-500">
+                        <p class="font-bold text-xl mb-2">🎉 All Essential Keywords Found!</p>
+                        <p class="text-sm">Your CV includes all defined critical skills. Review the frequency breakdown below to ensure optimal usage.</p>
+                    </div>
+                `;
+            }
+
+
+            // --- Section 2: Detailed Frequency List ---
+            const detailHtml = document.createElement('div');
+            detailHtml.className = 'space-y-4';
+
+            keywordResults.forEach(kw => {
+                const statusColor = kw.count === 0 ? 'bg-gray-200 text-gray-500' : 'bg-green-100 text-green-700 font-medium';
+                const countClass = kw.isEssential && kw.count === 0 ? 'text-danger' : 'text-primary';
+                const statusText = kw.count === 0 ? 'Missing' : 'Found';
+                const essentialBadge = kw.isEssential ? 
+                    '<span class="ml-2 text-xs font-semibold inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">Essential</span>' : '';
+
+                const item = `
+                    <div class="p-3 rounded-lg shadow-sm border ${kw.count === 0 && kw.isEssential ? 'border-danger bg-red-50' : 'border-gray-200 bg-white'} flex items-center justify-between transition-all duration-300">
+                        <!-- Keyword and Badge -->
+                        <div class="flex-1 min-w-0 mr-4">
+                            <span class="text-sm font-semibold text-gray-800">${kw.word}</span>
+                            <span class="text-xs text-gray-500 ml-1">(${kw.category})</span>
+                            ${essentialBadge}
+                        </div>
+                        
+                        <!-- Status and Count -->
+                        <div class="flex items-center space-x-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold w-20 text-center ${statusColor}">
+                                ${statusText}
+                            </span>
+                            <span class="text-lg font-extrabold ${countClass} w-10 text-right">
+                                ${kw.count}x
+                            </span>
+                        </div>
+                    </div>
+                `;
+                detailHtml.innerHTML += item;
+            });
+
+            resultsContainer.innerHTML += '<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4 border-b pb-2">Frequency Breakdown</h3>';
+            resultsContainer.appendChild(detailHtml);
+        }
+
+        /**
+         * Renders a simple error message.
+         */
+        function renderError(message) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <div class="p-4 bg-yellow-100 text-yellow-800 rounded-lg shadow-md border-2 border-yellow-400">
+                    <p class="font-bold text-lg mb-1">Attention Required</p>
+                    <p class="text-sm">${message}</p>
+                </div>
+            `;
+        }
+
+        /**
+         * Renders the list of target keywords in the informational box.
+         */
+        function displayTargetKeywords() {
+            const listEl = document.getElementById('targetKeywordsList');
+            const keywords = TARGET_KEYWORDS.map(kw => {
+                const badge = kw.isEssential ? 
+                    '<span class="text-primary font-bold">(E)</span>' : 
+                    '<span class="text-gray-500">(O)</span>';
+                return `${kw.word} ${badge}`;
+            });
+            listEl.innerHTML = keywords.join(', ');
+        }
+        
+        // Initialize the app on load
+        window.onload = () => {
+            displayTargetKeywords();
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Analysis Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Shared styling from index.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f9fb; 
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Vertical centering */
+    min-height: 100vh; /* Full viewport height for centering */
+    padding: 1rem;
+    flex-grow: 1; /* Flexible growth */
+}
+.main-content {
+    width: 100%;
+    max-width: 4xl; /* Tailwind max-w-4xl */
+    background-color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 1.5rem; /* Tailwind rounded-3xl */
+    padding: 2rem; /* Tailwind p-8 */
+    margin: 1rem; /* Add margin for flexibility */
+}
+/* Custom circle for the score display */
+.score-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background-color: #f0fdf4; /* Default green */
+    border: 8px solid #34d399;
+    display: flex; /* Ensure it's a flex container */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    visibility: visible; /* Force visibility */
+    opacity: 1; /* Full opacity */
+    position: relative; /* Ensure it's not clipped */
+}
+.score-circle-good { background-color: #f0fdf4; border-color: #34d399; }
+.score-circle-moderate { background-color: #fffbeb; border-color: #f59e0b; }
+.score-circle-low { background-color: #fef2f2; border-color: #ef4444; }
+.text-good { color: #10b981; }
+.text-moderate { color: #f59e0b; }
+.text-low { color: #ef4444; }
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem; /* Smaller padding on mobile */
+        margin: 0.5rem;
+    }
+    .score-circle {
+        width: 120px; /* Smaller circle on mobile */
+        height: 120px;
+    }
+}
+        /* Utility classes for dynamic border/background */
+        .score-circle-good { background-color: #f0fdf4; border-color: #34d399; }
+        .score-circle-moderate { background-color: #fffbeb; border-color: #f59e0b; }
+        .score-circle-low { background-color: #fef2f2; border-color: #ef4444; }
+
+        .text-good { color: #10b981; }
+        .text-moderate { color: #f59e0b; }
+        .text-low { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <nav class="bg-white shadow-md w-full p-4 flex justify-center sticky top-0 z-10">
+        <div class="flex space-x-8 text-lg font-medium">
+            <a href="index.html" class="text-gray-600 hover:text-secondary transition duration-150">Home</a>
+            <a href="CVUploadPage.html" class="text-gray-600 hover:text-secondary transition duration-150">Upload CV</a>
+            <a href="ResultsPageUI.html" class="text-primary hover:text-secondary transition duration-150 font-bold">View Results</a>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+    <main class="main-content">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-primary mb-2">
+                Your CV Analysis Complete!
+            </h1>
+            <p class="text-xl text-gray-600">
+                Target Role: <strong id="target-role"></strong>
+            </p>
+        </header>
+
+        <!-- Score Section -->
+        <section class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-10 border-b pb-8">
+            <div class="score-circle" id="score-circle">
+                <span class="text-4xl md:text-6xl font-extrabold" id="overall-score"></span>
+                <span class="text-sm font-semibold text-gray-700 mt-1">/ 100 Score</span>
+            </div>
+            <div class="text-left space-y-3 w-full md:w-auto">
+                <h2 class="text-2xl font-bold text-gray-800">Quick Metrics:</h2>
+                <p class="text-lg font-medium flex items-center" id="metric-ats">
+                    <span class="mr-2" id="ats-icon"></span> <strong id="ats-label">ATS Compatibility:</strong> <span id="ats-value"></span>
+                </p>
+                <p class="text-lg font-medium flex items-center" id="metric-keyword">
+                    <span class="mr-2" id="keyword-icon"></span> <strong id="keyword-label">Keyword Match:</strong> <span id="keyword-value"></span>
+                </p>
+                <p class="text-lg font-medium flex items-center" id="metric-action-verbs">
+                    <span class="mr-2" id="verbs-icon"></span> <strong id="verbs-label">Action Verbs:</strong> <span id="verbs-value"></span>
+                </p>
+            </div>
+        </section>
+
+        <!-- Strengths and Improvements -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div class="bg-green-50 p-4 md:p-6 rounded-xl border-l-4 border-secondary shadow-md">
+                <h3 class="text-xl md:text-2xl font-bold text-secondary mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Top Strengths
+                </h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700" id="strengths-list"></ul>
+            </div>
+            <div class="bg-red-50 p-4 md:p-6 rounded-xl border-l-4 border-danger shadow-md">
+                <h3 class="text-xl md:text-2xl font-bold text-danger mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Areas for Improvement
+                </h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700" id="improvements-list"></ul>
+            </div>
+        </section>
+
+        <!-- Keyword Analysis -->
+        <section class="mt-8 bg-yellow-50 p-4 md:p-6 rounded-xl border-l-4 border-warning shadow-md">
+            <h3 class="text-xl md:text-2xl font-bold text-warning mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Target Keyword Analysis
+            </h3>
+            <p class="mb-3 text-gray-700" id="keyword-match-summary"></p>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="py-2">Keyword</th>
+                        <th class="py-2">Status</th>
+                        <th class="py-2">Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-gray-800" id="keyword-table-body"></tbody>
+            </table>
+        </section>
+
+        <!-- Tips -->
+        <section class="mt-8 bg-primary/5 p-4 md:p-6 rounded-xl border-l-4 border-primary shadow-md">
+            <h3 class="text-xl md:text-2xl font-bold text-primary mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6 1.111l-.452.222M21 12l-1 1h-4.663M3 12l1 1h4.663M12 21v-1m-4.522-1.447l-.452-.222M3 5.111l.452.222m16.052 9.088l.452.222M12 3c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8z"></path></svg>
+                Tips to Boost Your CV Score
+            </h3>
+            <ul class="list-disc list-inside space-y-3 text-gray-700 ml-4" id="tips-list"></ul>
+        </section>
+
+        <!-- Footer -->
+        <div class="mt-10 text-center">
+            <p class="text-lg text-gray-600 mb-4">Improve your score and get hired faster.</p>
+            <a href="CVUploadPage.html" class="inline-flex items-center px-6 md:px-8 py-3 bg-primary text-white font-semibold text-lg rounded-full shadow-lg hover:bg-primary/90 transition duration-300 transform hover:scale-105">
+                Revise and Re-Analyze Your CV
+            </a>
+        </div>
+    </main>
+</div>
+
+<script>
+    // --- Utility Functions ---
+
+    // Function to Get Status Class and Score Text Color
+    const getStatusStyles = (status, isScore = false) => {
+        if (isScore) {
+            if (status >= 75) return { circleClass: 'score-circle-good', textClass: 'text-secondary' };
+            if (status >= 50) return { circleClass: 'score-circle-moderate', textClass: 'text-warning' };
+            return { circleClass: 'score-circle-low', textClass: 'text-danger' };
+        } else {
+            // General status mapping for quick metrics
+            if (status >= 75) return { textClass: 'text-secondary' };
+            if (status >= 50) return { textClass: 'text-warning' };
+            return { textClass: 'text-danger' };
+        }
+    };
+
+    // Simple function to determine status string based on score thresholds
+    const getStatus = (score) => {
+        if (score >= 75) return 'good';
+        if (score >= 50) return 'moderate';
+        return 'low';
+    };
+
+    // Job-specific tips
+    const jobTips = {
+        'senior software engineer': [
+            'Highlight technical skills like Python, AWS, and SQL in your experience.',
+            'Include code samples or GitHub links.',
+            'Quantify code contributions (e.g., "Optimized database queries, reducing load time by 30%").'
+        ],
+        'data scientist (ml focus)': [
+            'Emphasize ML models and tools like TensorFlow or scikit-learn.',
+            'Show data visualization examples.',
+            'Add metrics like "Improved model accuracy by 15% using feature engineering".'
+        ],
+        'marketing manager': [
+            'Focus on campaign ROI and audience growth.',
+            'Use tools like HubSpot or Google Analytics.',
+            'Quantify results (e.g., "Increased leads by 40% through targeted ads").'
+        ],
+        'product manager': [
+            'Detail product roadmaps and stakeholder management.',
+            'Highlight agile methodologies and user story creation.',
+            'Show impact (e.g., "Launched feature increasing user retention by 25%").'
+        ],
+        'ux/ui designer': [
+            'Showcase design tools like Figma and prototyping skills.',
+            'Include user research and wireframe examples.',
+            'Quantify improvements (e.g., "Reduced bounce rate by 20% with new UI").'
+        ],
+        'devops engineer': [
+            'Emphasize tools like Docker, Kubernetes, and CI/CD pipelines.',
+            'Highlight AWS or cloud deployments.',
+            'Add metrics (e.g., "Reduced deployment time by 50% with automation").'
+        ],
+        'business analyst': [
+            'Focus on requirements gathering and SQL/Excel proficiency.',
+            'Show process improvements.',
+            'Quantify (e.g., "Streamlined workflow, saving 15 hours/week").'
+        ],
+        'sales representative': [
+            'Highlight CRM usage and lead generation.',
+            'Emphasize negotiation and pipeline management.',
+            'Add numbers (e.g., "Closed deals worth $500K in Q1").'
+        ],
+        'hr specialist': [
+            'Detail recruitment, compliance, and training.',
+            'Show employee relations impact.',
+            'Quantify (e.g., "Reduced turnover by 30% through initiatives").'
+        ],
+        'project manager': [
+            'Emphasize Agile, Scrum, and risk management.',
+            'Highlight budgeting and stakeholder communication.',
+            'Show results (e.g., "Delivered project 10% under budget").'
+        ],
+        'default': [
+            'Use action verbs like "Developed" or "Optimized" at the start of bullet points.',
+            'Quantify achievements (e.g., "Increased sales by 20%").',
+            'Tailor your CV for each job by including role-specific keywords.',
+            'Keep your CV to 1-2 pages and ensure ATS-friendly formatting.',
+            'Proofread for errors and get feedback from peers.'
+        ]
+    };
+
+    // --- Main Population Function ---
+    const populateResults = (data) => {
+        console.log('Populating results with data:', data);
+
+        // --- 1. Header and Score ---
+        const targetRole = document.getElementById('target-role');
+        const overallScore = document.getElementById('overall-score');
+        const scoreCircle = document.getElementById('score-circle');
+        if (targetRole) targetRole.textContent = data.role || 'N/A';
+        if (overallScore) overallScore.textContent = data.score || 'N/A';
+        if (scoreCircle) {
+            const scoreStyles = getStatusStyles(data.score, true);
+            scoreCircle.classList.remove('score-circle-good', 'score-circle-moderate', 'score-circle-low');
+            scoreCircle.classList.add(scoreStyles.circleClass);
+            scoreCircle.style.visibility = 'visible'; // Force visibility
+            scoreCircle.style.opacity = '1';
+        }
+        if (overallScore) {
+            overallScore.classList.remove('text-secondary', 'text-warning', 'text-danger');
+            overallScore.classList.add(getStatusStyles(data.score, true).textClass);
+        }
+        
+        // --- 2. Quick Metrics (Fixed ID Mappings) ---
+        const dynamicMetrics = {
+            ats: {
+                value: `${data.atsScore || 0}%`,
+                status: getStatus(data.atsScore || 0),
+                icon: getStatus(data.atsScore || 0) === 'good' ? '✅' : (getStatus(data.atsScore || 0) === 'moderate' ? '🟡' : '⚠️')
+            },
+            keyword: {
+                value: `${data.keywordMatch || 0}% Matched`,
+                status: getStatus(data.keywordMatch || 0),
+                icon: getStatus(data.keywordMatch || 0) > 60 ? '⭐' : '❌'
+            },
+            actionVerbs: {
+                value: `${data.actionVerbCount || 0} unique verbs found`,
+                status: getStatus((data.actionVerbCount || 0) * 10), 
+                icon: getStatus((data.actionVerbCount || 0) * 10) > 60 ? '✅' : '❌'
+            },
+        };
+
+        // Correct ID mappings
+        const idMap = {
+            ats: 'ats-value',
+            keyword: 'keyword-value',
+            actionVerbs: 'verbs-value',
+            atsIcon: 'ats-icon',
+            keywordIcon: 'keyword-icon',
+            verbsIcon: 'verbs-icon'
+        };
+
+        Object.keys(dynamicMetrics).forEach(key => {
+            const metric = dynamicMetrics[key];
+            const valueId = idMap[key];
+            const iconId = idMap[`${key}Icon`];
+            const parentId = `metric-${key}`;
+            
+            if (valueId && document.getElementById(valueId)) {
+                document.getElementById(valueId).textContent = metric.value;
+            }
+            if (iconId && document.getElementById(iconId)) {
+                document.getElementById(iconId).textContent = metric.icon;
+            }
+            const metricElement = document.getElementById(parentId);
+            if (metricElement) {
+                metricElement.classList.remove('text-secondary', 'text-warning', 'text-danger');
+                metricElement.classList.add(getStatusStyles(metric.status).textClass);
+            }
+        });
+
+        // --- 3. Strengths and Improvements ---
+        const strengthsList = document.getElementById('strengths-list');
+        const improvementsList = document.getElementById('improvements-list');
+        if (strengthsList) strengthsList.innerHTML = '';
+        if (improvementsList) improvementsList.innerHTML = '';
+
+        if (data.generalRecommendations && Array.isArray(data.generalRecommendations)) {
+            data.generalRecommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                if (rec.includes('✅') || rec.includes('Excellent') || rec.includes('High')) {
+                    if (strengthsList) strengthsList.appendChild(li);
+                } else {
+                    if (improvementsList) improvementsList.appendChild(li);
+                }
+            });
+        }
+
+        // Defaults if empty
+        if (strengthsList && !strengthsList.children.length) {
+            const li = document.createElement('li');
+            li.textContent = 'No major strengths identified—focus on adding keywords and metrics!';
+            strengthsList.appendChild(li);
+        }
+        if (improvementsList && !improvementsList.children.length) {
+            const li = document.createElement('li');
+            li.textContent = 'Your CV looks solid—consider tailoring further for specific roles.';
+            improvementsList.appendChild(li);
+        }
+
+        // --- 4. Keyword Analysis Table ---
+        const keywordTableBody = document.getElementById('keyword-table-body');
+        const keywordMatchSummary = document.getElementById('keyword-match-summary');
+        if (keywordTableBody) keywordTableBody.innerHTML = '';
+        if (keywordMatchSummary) keywordMatchSummary.textContent = `You matched ${data.keywordMatch || 0}% of target keywords for ${data.role || 'the role'}.`;
+
+        if (data.allKeywords && Array.isArray(data.allKeywords)) {
+            data.allKeywords.forEach(keyword => {
+                const row = document.createElement('tr');
+                const isMatched = data.missingKeywords && !data.missingKeywords.includes(keyword);
+                row.innerHTML = `
+                    <td class="py-2">${keyword}</td>
+                    <td class="py-2">${isMatched ? '✅ Found' : '❌ Missing'}</td>
+                    <td class="py-2">${isMatched ? 'Great job!' : 'Add this to your experience/skills section.'}</td>
+                `;
+                if (keywordTableBody) keywordTableBody.appendChild(row);
+            });
+        }
+
+        // --- 5. Tips Section (Job-Specific) ---
+        const tipsList = document.getElementById('tips-list');
+        if (tipsList) {
+            tipsList.innerHTML = '';
+            const tips = jobTips[(data.role || '').toLowerCase()] || jobTips['default'];
+            tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipsList.appendChild(li);
+            });
+        }
+
+        console.log('Results populated successfully.');
+    };
+
+    // --- localStorage Data Retrieval and Initialization ---
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            const data = localStorage.getItem('cvAnalysisData');
+            if (!data) {
+                throw new Error('No analysis data found. Please upload your CV again.');
+            }
+            const results = JSON.parse(data);
+            if (!results || typeof results.score !== 'number') {
+                throw new Error('Invalid analysis data. Please try uploading again.');
+            }
+
+            // Populate results
+            populateResults(results);
+        } catch (error) {
+            console.error('Error loading results:', error);
+            document.body.innerHTML = `<h1>Error Loading Results</h1><p>${error.message}</p><a href="CVUploadPage.html">Try Again</a>`;
+        }
+    });
+</script>
+</body>
+</html>
